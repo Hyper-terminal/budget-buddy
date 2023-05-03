@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import Expenses from "./components/Expenses";
-import Form from "./components/Form";
-import { useState, useEffect } from "react";
+import ExpenseForm from "./components/ExpenseForm";
 
 function App() {
   const [data, setData] = useState([]);
@@ -10,17 +10,17 @@ function App() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/users")
+    fetch("http://localhost:3000/expenses")
       .then((res) => res.json())
       .then((result) => setData(result))
       .catch((err) => console.error(err));
   }, []);
 
   return (
-    <>
-      <Form onSetData={setData} />
+    <div className="bg-gray-900 min-h-screen">
+      <ExpenseForm onSetData={setData} />
       <Expenses data={data} onDelete={deleteHandler} />
-    </>
+    </div>
   );
 }
 

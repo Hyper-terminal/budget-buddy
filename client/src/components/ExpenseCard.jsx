@@ -1,6 +1,6 @@
 const ExpenseCard = ({ onDelete, expense }) => {
   const deleteHandler = () => {
-    fetch(`http://localhost:3000/users/${expense.id}`, {
+    fetch(`http://localhost:3000/expenses/${expense.id}`, {
       method: "delete",
     })
       .then((res) => res.json())
@@ -13,8 +13,8 @@ const ExpenseCard = ({ onDelete, expense }) => {
 
   return (
     <div className="border text-lg w-96 font-semibold border-gray-200 rounded-md mx-auto flex justify-around p-2 items-center">
-      <h2>{expense?.username}</h2>
-      <p>{expense?.phone}</p>
+      <h2>{expense?.description}</h2>
+      <p>{expense?.amount}</p>
       <button
         onClick={deleteHandler}
         type="button"

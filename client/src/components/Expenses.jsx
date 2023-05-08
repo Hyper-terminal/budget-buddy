@@ -1,13 +1,24 @@
+import Card from "./UI/Card";
+import Divider from "./UI/Divider";
 import ExpenseCard from "./ExpenseCard";
 
-const Expenses = ({ data, onDelete }) => {
+const Expenses = ({ data }) => {
   return (
-    <ul>
-      {data.length > 0 &&
-        data.map((item) => (
-          <ExpenseCard key={item.id} expense={item} onDelete={onDelete} />
-        ))}
-    </ul>
+    <Card style={{ width: "25rem", display: "inline-block" }}>
+      <div className="flex justify-between p-3 items-center">
+        <h3 className="font-bold text-xl">My Expenses</h3>
+        <p className="text-sm font-semibold cursor-pointer">See All</p>
+      </div>
+
+      <Divider />
+
+      <ul>
+        {data?.length > 0 &&
+          data?.slice(0,5)?.map((item, index) => (
+            <ExpenseCard key={item.id} expense={item} />
+          ))}
+      </ul>
+    </Card>
   );
 };
 

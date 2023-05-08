@@ -11,13 +11,12 @@ exports.getUsers = async (req, res) => {
 
 exports.postAddUser = async (req, res) => {
   try {
-    const { username, email, phone } = req.body;
-    console.log({ username, email, phone });
-    const user = await User.create({ username, email, phone });
-    if (user) res.send(user);
-    else res.send("Some error occured!");
+    const { username, email, password } = req.body;
+    console.log({ username, email, password });
+    const user = await User.create({ username, email, password });
+    if (user) res.json({ message: "success", user });
   } catch (error) {
-    console.error(error);
+    res.status(500).json({ message: error.errors[0].message });
   }
 };
 
@@ -32,6 +31,6 @@ exports.deleteUser = async (req, res) => {
     });
     res.json({ message: "successfully deleted" });
   } catch (error) {
-    console.error(error);
+    console.error(error.error);
   }
 };

@@ -1,5 +1,4 @@
 const Card = ({ children, className, ...rest }) => {
-  console.log(className)
   const customClasses = className ? className : "";
   return (
     <div

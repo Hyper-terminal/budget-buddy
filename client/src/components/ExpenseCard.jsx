@@ -51,4 +51,5 @@ const ExpenseCard = ({ expense }) => {
     </>
   );
 };
+
 export default ExpenseCard;

@@ -8,8 +8,6 @@ import Expenses from "../components/Expenses";
 const Home = () => {
   const [data, setData] = useState([]);
 
-  console.log("rendering again");
-
   const deleteHandler = (id) => {
     setData((prev) => prev.filter((item) => item.id !== id));
   };

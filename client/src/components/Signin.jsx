@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Card from "./UI/Card.jsx";
 import Input from "./UI/Input.jsx";
+import { AuthContext } from "../context/auth-context.jsx";
+import { Link } from "react-router-dom";
 
 const API_URL = "http://localhost:3000/users/signin";
 const INITIAL_FORM = { email: "", password: "" };
@@ -8,6 +10,8 @@ const INITIAL_FORM = { email: "", password: "" };
 const Signin = () => {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState("");
+
+  const { signIn } = useContext(AuthContext);
 
   const inputHandler = (event) => {
     setErrors(null);
@@ -26,7 +30,7 @@ const Signin = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-
+      signIn(data.user);
       setForm(INITIAL_FORM);
     } catch (error) {
       setErrors(error.message);
@@ -78,9 +82,12 @@ const Signin = () => {
         >
           Sign in
         </button>
-        <a className="cursor-pointer hover:text-gray-500 transition-all duration-300 ease-in-out">
+        <Link
+          to="/signup"
+          className="cursor-pointer hover:text-gray-500 transition-all duration-300 ease-in-out"
+        >
           Don't have an account? Sign up
-        </a>
+        </Link>
       </form>
     </Card>
   );

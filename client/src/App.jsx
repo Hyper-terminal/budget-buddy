@@ -1,9 +1,9 @@
 import Auth from "./pages/Auth.jsx";
 
 function App() {
-    return <div>
+    return <>
         <Auth/>
-    </div>
+    </>
 }
 
 export default App;

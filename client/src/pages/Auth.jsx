@@ -1,7 +1,12 @@
 import Signup from "../components/Signup.jsx";
+import Signin from "../components/Signin.jsx";
 
 const Auth = () => {
-    return <Signup />
-}
+  return (
+    <>
+      <Signin /> <Signup />
+    </>
+  );
+};
 
 export default Auth;

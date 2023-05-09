@@ -1,20 +1,27 @@
 const User = require("../models/user");
 
-exports.getUsers = async (req, res) => {
+exports.postSignupUser = async (req, res) => {
   try {
-    const users = await User.findAll();
-    res.send(users);
-  } catch (err) {
-    console.error(err);
+    const { username, email, password } = req.body;
+    const user = await User.create({ username, email, password });
+    if (user) res.json({ message: "success", user });
+  } catch (error) {
+    res.status(500).json({ message: error.errors[0].message });
   }
 };
 
-exports.postAddUser = async (req, res) => {
+exports.postSigninUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    console.log({ username, email, password });
-    const user = await User.create({ username, email, password });
-    if (user) res.json({ message: "success", user });
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
+    if (!user) res.status(404).json({ message: "No user found" });
+    else {
+      if (user.password.toString() === password.toString()) {
+        res.json({ message: "success", user });
+      } else {
+        res.status(401).json({ message: "password didn't match" });
+      }
+    }
   } catch (error) {
     res.status(500).json({ message: error.errors[0].message });
   }

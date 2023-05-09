@@ -2,10 +2,10 @@ import { useState } from "react";
 import Card from "./UI/Card.jsx";
 import Input from "./UI/Input.jsx";
 
-const API_URL = "http://localhost:3000/users/signup";
-const INITIAL_FORM = { username: "", email: "", password: "" };
+const API_URL = "http://localhost:3000/users/signin";
+const INITIAL_FORM = { email: "", password: "" };
 
-const Signup = () => {
+const Signin = () => {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState("");
 
@@ -48,18 +48,6 @@ const Signup = () => {
         onSubmit={submitHandler}
         className="flex flex-col justify-center w-full h-full p-3"
       >
-        <label htmlFor="username" className="mt-5 mb-1">
-          Name <span className="text-red-600">*</span>
-        </label>
-        <Input
-          type="name"
-          name="username"
-          placeholder="Pick your name"
-          value={form.username}
-          onChange={inputHandler}
-          error={errors}
-          required
-        />
         <label htmlFor="email" className="mt-5 mb-1">
           Email <span className="text-red-600">*</span>
         </label>
@@ -88,14 +76,14 @@ const Signup = () => {
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-3  mt-5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         >
-          Sign up
+          Sign in
         </button>
         <a className="cursor-pointer hover:text-gray-500 transition-all duration-300 ease-in-out">
-          Already have an account? Sign in
+          Don't have an account? Sign up
         </a>
       </form>
     </Card>
   );
 };
 
-export default Signup;
+export default Signin;

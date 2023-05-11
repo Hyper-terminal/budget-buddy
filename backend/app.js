@@ -13,7 +13,7 @@ app.use("/users", userRoutes);
 app.use("/expenses", expenseRoutes);
 
 sequelize
-  .sync()
+  .sync({force:true})
   .then(() => {
     app.listen(3000);
   })

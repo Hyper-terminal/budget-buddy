@@ -1,26 +1,51 @@
 import { useState } from "react";
 import Card from "./UI/Card";
 import Input from "./UI/Input";
+import DropDown from "./UI/DropDown";
 
 const formInitialState = {
-  category: "",
   description: "",
   amount: "",
 };
 
+const categories = ["Food", "Travel", "Entertainment", "Bills", "Others"];
+
 const ExpenseForm = ({ onSetData }) => {
   const [form, setForm] = useState(formInitialState);
-  const { category, description, amount } = form;
+  const [category, setCategory] = useState("");
+  const { description, amount } = form;
+  const [error, setError] = useState("");
 
-  const changeHandler = (event) =>
+  const handleCategorySelect = (selectedCategory) => {
+    setError("");
+    setCategory(selectedCategory);
+  };
+
+  const changeHandler = (event) => {
+    setError("");
     setForm((prev) => {
       return { ...prev, [event.target.name]: event.target.value };
     });
+  };
 
   const submitHandler = (event) => {
     event.preventDefault();
-    onSetData(form);
+    if (!category) {
+      setError("Please select a category");
+      return;
+    }
+    if (!description) {
+      setError("Please enter a description");
+      return;
+    }
+    if (!amount) {
+      setError("Please enter an amount");
+      return;
+    }
+    onSetData({ ...form, category });
     setForm(formInitialState);
+    setCategory("");
+    setError("");
   };
 
   return (
@@ -29,12 +54,11 @@ const ExpenseForm = ({ onSetData }) => {
         onSubmit={submitHandler}
         className="flex flex-col gap-2 w-96 mx-auto mt-5"
       >
-        <Input
-          type="text"
-          name="category"
-          placeholder="Category"
-          value={category}
-          onChange={changeHandler}
+        {error && <p className="text-red-500">{error}</p>}
+        <DropDown
+          categories={categories}
+          selectedCategory={category}
+          onSelect={handleCategorySelect}
         />
         <Input
           type="number"
@@ -42,9 +66,15 @@ const ExpenseForm = ({ onSetData }) => {
           placeholder="Amount "
           value={amount}
           onChange={changeHandler}
+          error={!amount && error === "Please enter an amount"}
+          required
         />
         <textarea
-          className="outline-none border p-3 text-gray-900  bg-[#f9f9ff] rounded-lg focus:border-blue-500 transition-colors duration-300 ease-linear"
+          className={`${
+            !description && error === "Please enter a description"
+              ? "border-red-400"
+              : ""
+          } outline-none border p-3 text-gray-900 bg-[#f9f9ff] rounded-lg focus:border-blue-500 transition-colors duration-300 ease-linear`}
           name="description"
           placeholder="Description"
           value={description}

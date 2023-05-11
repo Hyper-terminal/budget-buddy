@@ -7,11 +7,11 @@ import Expenses from "../components/Expenses";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const [error, setError] = useState("");
 
   const deleteHandler = (id) => {
     setData((prev) => prev.filter((item) => item.id !== id));
   };
-
   const dataHandler = async (expense) => {
     try {
       const res = await fetch("http://localhost:3000/expenses", {
@@ -21,10 +21,15 @@ const Home = () => {
         },
         body: JSON.stringify(expense),
       });
+      if (!res.ok) {
+        throw new Error("Failed to create expense");
+      }
       const data = await res.json();
       setData((prev) => [...prev, data]);
+      setError("");
     } catch (error) {
       console.error(error);
+      setError(error.message);
     }
   };
 
@@ -37,6 +42,8 @@ const Home = () => {
 
   return (
     <div>
+      {error && <p className="text-red-500">{error}</p>}
+
       <div className="flex items-center flex-wrap justify-center w-screen mt-10 lg:mt-0 px-5">
         <Banner />
         <ExpenseForm onSetData={dataHandler} />

@@ -11,8 +11,16 @@ exports.postSignupUser = async (req, res) => {
     const user = await User.create({ username, email, password: hash });
     res.json({ message: "success", user });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    if (error.name === "SequelizeUniqueConstraintError") {
+      res
+        .status(400)
+        .json({ message: `${error.errors[0].value} already exists` });
+    } else if (error.name === "SequelizeValidationError") {
+      res.status(400).json({ message: error.errors[0].message });
+    } else {
+      res.status(500).json({ message: "Failed to create user" });
+    }
   }
 };
 
@@ -31,7 +39,7 @@ exports.postSigninUser = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Failed to log in" });
   }
 };
 
@@ -47,5 +55,6 @@ exports.deleteUser = async (req, res) => {
     res.json({ message: "successfully deleted" });
   } catch (error) {
     console.error(error.error);
+    res.status(500).json({ message: "Failed to delete user" });
   }
 };

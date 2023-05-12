@@ -29,9 +29,11 @@ const Signup = () => {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      signIn(data.user);
-      setForm(INITIAL_FORM);
+      if (!data.success) throw new Error(data.message);
+      else {
+        setForm(INITIAL_FORM);
+        signIn(data);
+      }
     } catch (error) {
       setErrors(error.message);
     }

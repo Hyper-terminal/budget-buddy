@@ -18,7 +18,6 @@ const Chart = ({ data }) => {
         maxWidth: "100%",
         width: isDesktop ? "45%" : "90%",
         height: "32rem",
-        display: "inline-block",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

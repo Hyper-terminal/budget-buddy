@@ -13,11 +13,13 @@ const Home = () => {
     setData((prev) => prev.filter((item) => item.id !== id));
   };
   const dataHandler = async (expense) => {
+    
     try {
       const res = await fetch("http://localhost:3000/expenses", {
         method: "post",
         headers: {
           "Content-type": "application/json",
+          Authorization: localStorage.getItem("JWT_TOKEN"),
         },
         body: JSON.stringify(expense),
       });
@@ -34,7 +36,9 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/expenses")
+    fetch("http://localhost:3000/expenses", {
+      headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
+    })
       .then((res) => res.json())
       .then((result) => setData(result))
       .catch((err) => console.error(err));
@@ -43,7 +47,6 @@ const Home = () => {
   return (
     <div>
       {error && <p className="text-red-500">{error}</p>}
-
       <div className="flex items-center flex-wrap justify-center w-screen mt-10 lg:mt-0 px-5">
         <Banner />
         <ExpenseForm onSetData={dataHandler} />

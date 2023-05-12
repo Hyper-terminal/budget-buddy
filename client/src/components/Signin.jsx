@@ -29,9 +29,12 @@ const Signin = () => {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      signIn(data.user);
-      setForm(INITIAL_FORM);
+
+      if (!data.success) throw new Error(data.message);
+      else {
+        signIn(data);
+        setForm(INITIAL_FORM);
+      }
     } catch (error) {
       setErrors(error.message);
     }

@@ -1,7 +1,6 @@
 const sequelize = require("../utils/database");
 const { DataTypes } = require("sequelize");
 
-
 const User = sequelize.define("user", {
   id: {
     type: DataTypes.INTEGER,
@@ -29,7 +28,7 @@ const User = sequelize.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [8, 50],
+      len: [8, 500],
     },
   },
 });

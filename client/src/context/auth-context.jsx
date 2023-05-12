@@ -8,15 +8,17 @@ export const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  
+
   const signIn = (user) => {
-    setCurrentUser(user);
+    setCurrentUser(user.user);
+    localStorage.setItem("JWT_TOKEN", user.jwtToken);
     localStorage.setItem("USER_DETAILS", JSON.stringify(user));
   };
 
   const signOut = () => {
     setCurrentUser(null);
     localStorage.removeItem("USER_DETAILS");
+    localStorage.removeItem("JWT_TOKEN");
   };
 
   useEffect(() => {

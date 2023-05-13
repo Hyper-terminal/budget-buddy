@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import { AuthContext } from "./context/auth-context";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
@@ -18,12 +19,15 @@ function App() {
   }, [currentUser]);
 
   return (
-    <Routes>
-      {currentUser && <Route path="/" element={<Home />} />}
-      {!currentUser && <Route path="/signin" element={<Signin />} />}
-      {!currentUser && <Route path="/signup" element={<Signup />} />}
-      <Route path="*" element={<h1>Page not found</h1>} />
-    </Routes>
+    <>
+      <Sidebar />
+      <Routes>
+        {currentUser && <Route path="/" element={<Home />} />}
+        {!currentUser && <Route path="/signin" element={<Signin />} />}
+        {!currentUser && <Route path="/signup" element={<Signup />} />}
+        <Route path="*" element={<h1>Page not found</h1>} />
+      </Routes>
+    </>
   );
 }
 

@@ -9,9 +9,11 @@ import {
 
 import Card from "./UI/Card";
 import useMediaQuery from "../hooks/useMediaQuery";
+import { useExpense } from "../context/expense-context";
 
-const Chart = ({ data }) => {
+const Chart = () => {
   const isDesktop = useMediaQuery("(min-width: 1280px)");
+  const { expenses } = useExpense();
   return (
     <Card
       style={{
@@ -23,10 +25,12 @@ const Chart = ({ data }) => {
         alignItems: "center",
       }}
     >
-      {!data?.length && <h2 className="font-bold text-4xl">No expenses!</h2>}
-      {data.length > 0 && (
+      {!expenses?.length && (
+        <h2 className="font-bold text-4xl">No expenses!</h2>
+      )}
+      {expenses?.length > 0 && (
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={expenses}>
             <PolarGrid />
             <PolarAngleAxis dataKey="category" />
             <PolarRadiusAxis />

@@ -1,8 +1,11 @@
 import Card from "./UI/Card";
 import Divider from "./UI/Divider";
 import { GrClose } from "react-icons/gr";
+import { useExpense } from "../context/expense-context";
 
 const ExpenseDetails = ({ expense, onDetailsHandler }) => {
+  const { expenses, setExpenses } = useExpense();
+
   const myStyle = {
     position: "absolute",
     top: "50%",
@@ -11,6 +14,20 @@ const ExpenseDetails = ({ expense, onDetailsHandler }) => {
     width: "50%",
     padding: "1.5rem",
     zIndex: "30",
+  };
+
+  const deleteHandler = async () => {
+    const res = await fetch(`http://localhost:3000/expenses/${expense.id}`, {
+      method: "delete",
+      headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
+    });
+    const data = await res.json();
+    if (data.success) {
+      setExpenses(expenses.filter((item) => item.id !== expense.id));
+      onDetailsHandler();
+    } else {
+      alert(data.message);
+    }
   };
 
   return (
@@ -39,7 +56,10 @@ const ExpenseDetails = ({ expense, onDetailsHandler }) => {
         </p>
         <Divider />
         <div className="flex justify-around flex-wrap">
-          <button className="mt-3 rounded-lg bg-red-200 text-red-600 font-bold px-3 py-1 transition-all duration-300 ease-linear hover:bg-red-100">
+          <button
+            onClick={deleteHandler}
+            className="mt-3 rounded-lg bg-red-200 text-red-600 font-bold px-3 py-1 transition-all duration-300 ease-linear hover:bg-red-100"
+          >
             Delete
           </button>
           <button className="mt-3 rounded-lg bg-yellow-200 text-yellow-600 font-bold px-3 py-1  transition-all duration-300 ease-linear hover:bg-yellow-100">

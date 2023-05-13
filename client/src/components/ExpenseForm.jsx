@@ -2,23 +2,27 @@ import { useState } from "react";
 import Card from "./UI/Card";
 import Input from "./UI/Input";
 import DropDown from "./UI/DropDown";
+import { useExpense } from "../context/expense-context";
 
 const formInitialState = {
   description: "",
   amount: "",
+  category: "",
 };
 
 const categories = ["Food", "Travel", "Entertainment", "Bills", "Others"];
 
-const ExpenseForm = ({ onSetData }) => {
+const ExpenseForm = () => {
   const [form, setForm] = useState(formInitialState);
-  const [category, setCategory] = useState("");
-  const { description, amount } = form;
   const [error, setError] = useState("");
+  const { expenses, setExpenses } = useExpense();
+  const { description, amount, category } = form;
 
   const handleCategorySelect = (selectedCategory) => {
     setError("");
-    setCategory(selectedCategory);
+    setForm((prev) => {
+      return { ...prev, category: selectedCategory };
+    });
   };
 
   const changeHandler = (event) => {
@@ -30,22 +34,34 @@ const ExpenseForm = ({ onSetData }) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (!category) {
-      setError("Please select a category");
+    if (!description || !amount || !category) {
+      setError("Please enter all required fields");
       return;
     }
-    if (!description) {
-      setError("Please enter a description");
-      return;
-    }
-    if (!amount) {
-      setError("Please enter an amount");
-      return;
-    }
-    onSetData({ ...form, category });
-    setForm(formInitialState);
-    setCategory("");
-    setError("");
+    const expense = {
+      description,
+      amount,
+      category,
+    };
+    // Send the expense to the server
+    fetch("http://localhost:3000/expenses", {
+      method: "POST",
+      headers: {
+        Authorization: localStorage.getItem("JWT_TOKEN"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(expense),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) {
+          setForm(formInitialState);
+          setExpenses([...expenses, expense]);
+        } else {
+          setError(result.message);
+        }
+      })
+      .catch((err) => console.error(err));
   };
 
   return (

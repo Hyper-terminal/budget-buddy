@@ -67,7 +67,6 @@ exports.postSigninUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.userId;
-
     await User.destroy({
       where: {
         id: userId,

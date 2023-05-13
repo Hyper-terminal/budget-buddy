@@ -3,9 +3,11 @@ const Expense = require("../models/expense");
 exports.getExpenses = async (req, res) => {
   try {
     const expenses = await Expense.findAll({ where: { userId: req.user.id } });
-    res.send(expenses);
+    res.json({ success: true, expenses });
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve expenses" });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to retrieve expenses" });
   }
 };
 
@@ -18,13 +20,16 @@ exports.postExpenses = async (req, res) => {
       description,
       userId: req.user.id,
     });
-    res.send(expense);
+    res.json({ success: true, expense });
   } catch (error) {
-    console.log(error);
     if (error.name === "SequelizeValidationError") {
-      res.status(400).json({ message: error.errors[0].message });
+      res
+        .status(400)
+        .json({ success: false, message: error.errors[0].message });
     } else {
-      res.status(500).json({ message: "Failed to create expense" });
+      res
+        .status(500)
+        .json({ success: false, message: "Failed to create expense" });
     }
   }
 };
@@ -34,8 +39,10 @@ exports.deleteExpenses = async (req, res) => {
     await Expense.destroy({
       where: { id: req.params.expenseId, userId: req.user.id },
     });
-    res.json({ message: "Expense deleted successfully" });
+    res.json({ success: true, message: "Expense deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete expense" });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete expense" });
   }
 };

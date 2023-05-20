@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import Home from "./pages/Home";
-import Signup from "./components/Signup";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import ExpenseModal from "./components/ExpenseModal";
+import SimpleSidebar from "./components/Sidebar/SimpleSidebar";
 import Signin from "./components/Signin";
+import Signup from "./components/Signup";
 import { AuthContext } from "./context/auth-context";
-import Sidebar from "./components/Sidebar";
+import Home from "./pages/Home";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
@@ -20,12 +21,17 @@ function App() {
 
   return (
     <>
-      <Sidebar />
+      <ExpenseModal />
       <Routes>
-        {currentUser && <Route path="/" element={<Home />} />}
         {!currentUser && <Route path="/signin" element={<Signin />} />}
         {!currentUser && <Route path="/signup" element={<Signup />} />}
-        <Route path="*" element={<h1>Page not found</h1>} />
+
+        {currentUser && (
+          <Route path="/" element={<SimpleSidebar />}>
+            <Route index element={<Home />} />
+            <Route path="*" element={<h1>Page not found</h1>} />
+          </Route>
+        )}
       </Routes>
     </>
   );

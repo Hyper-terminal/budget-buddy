@@ -1,8 +1,18 @@
-import { useContext, useState } from "react";
-import Card from "./UI/Card.jsx";
-import Input from "./UI/Input.jsx";
-import { AuthContext } from "../context/auth-context.jsx";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/auth-context";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Heading,
+  Input,
+  Link as ChakraLink,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 
 const API_URL = "http://localhost:3000/users/signin";
 const INITIAL_FORM = { email: "", password: "" };
@@ -29,11 +39,10 @@ const Signin = () => {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-
       if (!data.success) throw new Error(data.message);
       else {
-        signIn(data);
         setForm(INITIAL_FORM);
+        signIn(data);
       }
     } catch (error) {
       setErrors(error.message);
@@ -41,58 +50,93 @@ const Signin = () => {
   };
 
   return (
-    <Card className="md:w-96 w-[90%] mx-auto mt-24">
-      <h1 className="text-center text-3xl font-bold mb-3 text-blue-900">
-        Budget Buddy
-      </h1>
-      {errors && (
-        <p className="mt-10 bg-red-100 p-3 rounded-lg text-center text-red-700 font-semibold">
-          {errors[0].toLocaleUpperCase() + errors.slice(1)}
-        </p>
-      )}
-
-      <form
-        onSubmit={submitHandler}
-        className="flex flex-col justify-center w-full h-full p-3"
+    <Box
+      style={{ minHeight: "100vh", minWidth: "100vw", background: "#212f45" }}
+      py={10}
+    >
+      <Box
+        maxW="md"
+        mx="auto"
+        p="6"
+        borderRadius="lg"
+        boxShadow="xl"
+        bg="gray.900"
+        color="white"
       >
-        <label htmlFor="email" className="mt-5 mb-1">
-          Email <span className="text-red-600">*</span>
-        </label>
-        <Input
-          type="email"
-          error={errors}
-          placeholder="you@example.com"
-          name="email"
-          value={form.email}
-          onChange={inputHandler}
-          required
-        />
-        <label htmlFor="Password" className="mt-5 mb-1">
-          Password <span className="text-red-600">*</span>
-        </label>
-        <Input
-          type="password"
-          error={errors}
-          placeholder="Create a password"
-          name="password"
-          value={form.password}
-          onChange={inputHandler}
-          required
-        />
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-3  mt-5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-        >
-          Sign in
-        </button>
-        <Link
-          to="/signup"
-          className="cursor-pointer hover:text-gray-500 transition-all duration-300 ease-in-out"
-        >
-          Don't have an account? Sign up
-        </Link>
-      </form>
-    </Card>
+        <Heading textAlign="center" mb="6" fontSize="3xl" fontWeight="bold">
+          Budget Buddy
+        </Heading>
+        {errors && (
+          <Text mt="4" color="red.500" fontWeight="semibold" textAlign="center">
+            {errors[0].toUpperCase() + errors.slice(1)}
+          </Text>
+        )}
+
+        <form onSubmit={submitHandler}>
+          <VStack spacing="4" mt="8">
+            <FormControl id="email" isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                name="email"
+                value={form.email}
+                onChange={inputHandler}
+                bg="gray.800"
+                borderColor="gray.600"
+                _hover={{ borderColor: "blue.400" }}
+                _focus={{ borderColor: "blue.500" }}
+                _placeholder={{ color: "gray.500" }}
+                color="white"
+                focusBorderColor="blue.500"
+                size="lg"
+              />
+            </FormControl>
+
+            <FormControl id="password" isRequired>
+              <FormLabel>Password</FormLabel>
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                name="password"
+                value={form.password}
+                onChange={inputHandler}
+                bg="gray.800"
+                borderColor="gray.600"
+                _hover={{ borderColor: "blue.400" }}
+                _focus={{ borderColor: "blue.500" }}
+                _placeholder={{ color: "gray.500" }}
+                color="white"
+                focusBorderColor="blue.500"
+                size="lg"
+              />
+            </FormControl>
+
+            <Button
+              type="submit"
+              colorScheme="blue"
+              size="lg"
+              fontWeight="semibold"
+              rounded="full"
+              _hover={{ bg: "blue.600" }}
+              _focus={{ boxShadow: "none" }}
+            >
+              Sign in
+            </Button>
+
+            <ChakraLink
+              as={Link}
+              to="/signup"
+              color="gray.300"
+              fontWeight="semibold"
+              _hover={{ color: "white" }}
+            >
+              Don't have an account? Sign up
+            </ChakraLink>
+          </VStack>
+        </form>
+      </Box>
+    </Box>
   );
 };
 

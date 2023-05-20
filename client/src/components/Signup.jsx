@@ -1,8 +1,17 @@
-import { useContext, useState } from "react";
-import Card from "./UI/Card.jsx";
-import Input from "./UI/Input.jsx";
-import { AuthContext } from "../context/auth-context.jsx";
+import {
+  Box,
+  Button,
+  Link as ChakraLink,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/auth-context";
 
 const API_URL = "http://localhost:3000/users/signup";
 const INITIAL_FORM = { username: "", email: "", password: "" };
@@ -40,70 +49,112 @@ const Signup = () => {
   };
 
   return (
-    <Card className="md:w-96 w-[90%] mx-auto mt-24">
-      <h1 className="text-center text-3xl font-bold mb-3 text-blue-900">
-        Budget Buddy
-      </h1>
-      {errors && (
-        <p className="mt-10 bg-red-100 p-3 rounded-lg text-center text-red-700 font-semibold">
-          {errors[0].toLocaleUpperCase() + errors.slice(1)}
-        </p>
-      )}
-
-      <form
-        onSubmit={submitHandler}
-        className="flex flex-col justify-center w-full h-full p-3"
+    <Box
+      style={{ minHeight: "100vh", minWidth: "100vw", background: "#212f45" }}
+      py={10}
+    >
+      <Box
+        maxW="md"
+        mx="auto"
+        p="6"
+        borderRadius="lg"
+        boxShadow="xl"
+        bgGradient="linear(to-b, #041d2e, #0a0e1e)"
+        color="white"
       >
-        <label htmlFor="username" className="mt-5 mb-1">
-          Name <span className="text-red-600">*</span>
-        </label>
-        <Input
-          type="name"
-          name="username"
-          placeholder="Pick your name"
-          value={form.username}
-          onChange={inputHandler}
-          error={errors}
-          required
-        />
-        <label htmlFor="email" className="mt-5 mb-1">
-          Email <span className="text-red-600">*</span>
-        </label>
-        <Input
-          type="email"
-          error={errors}
-          placeholder="you@example.com"
-          name="email"
-          value={form.email}
-          onChange={inputHandler}
-          required
-        />
-        <label htmlFor="Password" className="mt-5 mb-1">
-          Password <span className="text-red-600">*</span>
-        </label>
-        <Input
-          type="password"
-          error={errors}
-          placeholder="Create a password"
-          name="password"
-          value={form.password}
-          onChange={inputHandler}
-          required
-        />
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-3  mt-5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-        >
-          Sign up
-        </button>
-        <Link
-          to="/signin"
-          className="cursor-pointer hover:text-gray-500 transition-all duration-300 ease-in-out"
-        >
-          Already have an account? Sign in
-        </Link>
-      </form>
-    </Card>
+        <Heading textAlign="center" mb="6" fontSize="3xl" fontWeight="bold">
+          Budget Buddy
+        </Heading>
+        {errors && (
+          <Text mt="4" color="red.500" fontWeight="semibold" textAlign="center">
+            {errors[0].toUpperCase() + errors.slice(1)}
+          </Text>
+        )}
+
+        <form onSubmit={submitHandler}>
+          <VStack spacing="4" mt="8">
+            <FormControl id="username" isRequired>
+              <FormLabel>Name</FormLabel>
+              <Input
+                type="text"
+                placeholder="Pick your name"
+                name="username"
+                value={form.username}
+                onChange={inputHandler}
+                bg="gray.800"
+                borderColor="gray.700"
+                _hover={{ borderColor: "blue.400" }}
+                _focus={{ borderColor: "blue.500" }}
+                _placeholder={{ color: "gray.500" }}
+                color="white"
+                focusBorderColor="blue.500"
+                size="lg"
+              />
+            </FormControl>
+
+            <FormControl id="email" isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                name="email"
+                value={form.email}
+                onChange={inputHandler}
+                bg="gray.800"
+                borderColor="gray.700"
+                _hover={{ borderColor: "blue.400" }}
+                _focus={{ borderColor: "blue.500" }}
+                _placeholder={{ color: "gray.500" }}
+                color="white"
+                focusBorderColor="blue.500"
+                size="lg"
+              />
+            </FormControl>
+
+            <FormControl id="password" isRequired>
+              <FormLabel>Password</FormLabel>
+              <Input
+                type="password"
+                placeholder="Create a password"
+                name="password"
+                value={form.password}
+                onChange={inputHandler}
+                bg="gray.800"
+                borderColor="gray.700"
+                _hover={{ borderColor: "blue.400" }}
+                _focus={{ borderColor: "blue.500" }}
+                _placeholder={{ color: "gray.500" }}
+                color="white"
+                focusBorderColor="blue.500"
+                size="lg"
+              />
+            </FormControl>
+
+            <Button
+              type="submit"
+              colorScheme="blue"
+              size="lg"
+              fontWeight="semibold"
+              rounded="full"
+              _hover={{ bg: "blue.600" }}
+              _focus={{ boxShadow: "none" }}
+            >
+              Sign up
+            </Button>
+
+            <ChakraLink
+              as={Link}
+              to="/signin"
+              color="gray.300"
+              fontWeight="semibold"
+              _hover={{ color: "white" }}
+            >
+              Already have an account? Sign in
+            </ChakraLink>
+          </VStack>
+        </form>
+      </Box>
+    </Box>
   );
 };
 

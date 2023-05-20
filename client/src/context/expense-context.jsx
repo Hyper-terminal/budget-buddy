@@ -3,8 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 const ExpenseContext = createContext({
   expenses: [],
   setExpenses: () => {},
-  error: String,
-  setError: () => {}
+
+  isExpenseModalOpen: false,
+  openExpenseModal: () => {},
+  closeExpenseModal: () => {},
 });
 
 export const useExpense = () => useContext(ExpenseContext);
@@ -12,9 +14,9 @@ export const useExpense = () => useContext(ExpenseContext);
 export const ExpenseProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState("");
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
 
   useEffect(() => {
-    console.log("Running this code")
     fetch("http://localhost:3000/expenses", {
       headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
     })
@@ -23,11 +25,22 @@ export const ExpenseProvider = ({ children }) => {
       .catch((err) => console.error(err));
   }, []);
 
+  const openExpenseModal = () => {
+    setIsExpenseModalOpen(true);
+  };
+
+  const closeExpenseModal = () => {
+    setIsExpenseModalOpen(false);
+  };
+
   const value = {
     expenses,
     setExpenses,
     error,
     setError,
+    isExpenseModalOpen,
+    openExpenseModal,
+    closeExpenseModal,
   };
 
   return (

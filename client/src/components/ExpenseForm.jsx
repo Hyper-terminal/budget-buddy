@@ -1,47 +1,57 @@
+import {
+  Box,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Stack,
+  Textarea,
+  useToast,
+} from "@chakra-ui/react";
 import { useState } from "react";
-import Card from "./UI/Card";
-import Input from "./UI/Input";
-import DropDown from "./UI/DropDown";
 import { useExpense } from "../context/expense-context";
+import CustomSelect from "./CustomSelect";
 
 const formInitialState = {
   description: "",
   amount: "",
   category: "",
+  name: "",
 };
-
-const categories = ["Food", "Travel", "Entertainment", "Bills", "Others"];
 
 const ExpenseForm = () => {
   const [form, setForm] = useState(formInitialState);
   const [error, setError] = useState("");
-  const { expenses, setExpenses } = useExpense();
-  const { description, amount, category } = form;
+  const { expenses, setExpenses, closeExpenseModal } = useExpense();
+  const { description, amount, category, name } = form;
+  const toast = useToast();
 
   const handleCategorySelect = (selectedCategory) => {
     setError("");
-    setForm((prev) => {
-      return { ...prev, category: selectedCategory };
-    });
+    setForm((prev) => ({ ...prev, category: selectedCategory }));
   };
 
   const changeHandler = (event) => {
     setError("");
-    setForm((prev) => {
-      return { ...prev, [event.target.name]: event.target.value };
-    });
+    setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
   };
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (!description || !amount || !category) {
+
+    if (!name || !amount || !category) {
       setError("Please enter all required fields");
       return;
     }
+
+    closeExpenseModal();
+
     const expense = {
       description,
       amount,
       category,
+      name,
     };
     // Send the expense to the server
     fetch("http://localhost:3000/expenses", {
@@ -57,53 +67,115 @@ const ExpenseForm = () => {
         if (result.success) {
           setForm(formInitialState);
           setExpenses([...expenses, expense]);
+          toast({
+            title: "Expense Added",
+            description: "Your expense has been successfully added.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
         } else {
           setError(result.message);
+          toast({
+            title: "Error",
+            description: result.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
         }
       })
       .catch((err) => console.error(err));
   };
 
   return (
-    <Card style={{ display: "inline-flex", marginTop: "1rem" }}>
-      <form
-        onSubmit={submitHandler}
-        className="flex flex-col gap-2 w-96 mx-auto mt-5"
-      >
-        {error && <p className="text-red-500">{error}</p>}
-        <DropDown
-          categories={categories}
-          selectedCategory={category}
-          onSelect={handleCategorySelect}
+    <Box
+      as="form"
+      onSubmit={submitHandler}
+      display="inline-flex"
+      flexDirection="column"
+      alignItems="flex-start"
+      mt={4}
+      bg="linear-gradient(45deg, #000022, #220044)"
+      p={10}
+      w={"50%"}
+      mb={10}
+    >
+      <FormControl isRequired mb={4}>
+        <FormLabel color="purple.200" fontSize="sm" mb={1}>
+          Name
+        </FormLabel>
+        <Input
+          name="name"
+          outline={"none"}
+          borderColor="purple.200"
+          placeholder="Name"
+          value={name}
+          onChange={changeHandler}
+          color="whiteAlpha.700"
+          fontWeight="semibold"
         />
+      </FormControl>
+
+      <FormControl isRequired isInvalid={!!error} mb={4}>
+        <FormLabel color="purple.200" fontSize="sm" mb={1}>
+          Category
+        </FormLabel>
+        <CustomSelect
+          value={category}
+          onChange={handleCategorySelect}
+          placeholder="Select category"
+        />
+      </FormControl>
+      <FormControl
+        isRequired
+        isInvalid={!amount && error === "Please enter an amount"}
+        mb={4}
+      >
+        <FormLabel color="purple.200" fontSize="sm" mb={1}>
+          Amount
+        </FormLabel>
         <Input
           type="number"
+          outline={"none"}
+          borderColor="purple.200"
           name="amount"
-          placeholder="Amount "
+          placeholder="Amount"
           value={amount}
           onChange={changeHandler}
-          error={!amount && error === "Please enter an amount"}
-          required
+          color="whiteAlpha.700"
+          fontWeight="semibold"
         />
-        <textarea
-          className={`${
-            !description && error === "Please enter a description"
-              ? "border-red-400"
-              : ""
-          } outline-none border p-3 text-gray-900 bg-[#f9f9ff] rounded-lg focus:border-blue-500 transition-colors duration-300 ease-linear`}
+      </FormControl>
+      <FormControl mb={4}>
+        <FormLabel color="purple.200" fontSize="sm" mb={1}>
+          Description
+        </FormLabel>
+        <Textarea
           name="description"
           placeholder="Description"
+          outline={"none"}
+          borderColor="purple.200"
           value={description}
           onChange={changeHandler}
+          color="whiteAlpha.700"
+          fontWeight="semibold"
         />
-        <button
+      </FormControl>
+      {error && <FormErrorMessage color="red.500">{error}</FormErrorMessage>}
+      <Stack direction={"row"}>
+        <Button onClick={() => closeExpenseModal()}>Cancel </Button>
+        <Button
           type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          colorScheme="purple"
+          variant="solid"
+          mt={4}
+          alignSelf="flex-start"
         >
           Add Expense
-        </button>
-      </form>
-    </Card>
+        </Button>
+      </Stack>
+    </Box>
   );
 };
 

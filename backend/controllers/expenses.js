@@ -13,13 +13,15 @@ exports.getExpenses = async (req, res) => {
 
 exports.postExpenses = async (req, res) => {
   try {
-    const { category, amount, description } = req.body;
+    const { category, amount, description, name } = req.body;
     const expense = await Expense.create({
       category,
       amount,
       description,
+      name,
       userId: req.user.id,
     });
+    
     res.json({ success: true, expense });
   } catch (error) {
     if (error.name === "SequelizeValidationError") {

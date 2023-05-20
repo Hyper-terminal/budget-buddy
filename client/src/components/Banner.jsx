@@ -1,45 +1,89 @@
-import { TbTriangleFilled, TbTriangleInvertedFilled } from "react-icons/tb";
-import Divider from "./UI/Divider";
-import useMediaQuery from "../hooks/useMediaQuery";
+import React from "react";
+import {
+  Box,
+  Flex,
+  Text,
+  Stack,
+  Progress,
+  useBreakpointValue,
+  Heading,
+} from "@chakra-ui/react";
+import { useExpense } from "../context/expense-context";
 
 const Banner = () => {
-  const isDesktop = useMediaQuery("(max-width: 1280px)");
+  const totalIncome = 345670;
+  const { expenses } = useExpense();
+  const totalExpenses = expenses.reduce(
+    (acc, expense) => acc + expense.amount,
+    0
+  );
+  const balance = totalIncome - totalExpenses;
+  const expensePercentage = (totalExpenses / totalIncome) * 100;
+
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
-    <div
-      className={`inline-flex flex-col w-2/3 ${
-        isDesktop && "sm:items-center"
-      }`}
+    <Box
+      bg="linear-gradient(45deg, #000022, #220044)"
+      p={4}
+      boxShadow="lg"
+      borderRadius="lg"
+      color="white"
     >
-      <div className="mb-3 px-8">
-        <h2 className="font-bold text-2xl text-gray-500 mb-2">
-          Your Remaining balance:
-          <span className="text-black font-bold ml-2">$50</span>
-        </h2>
-        <Divider />
-      </div>
+      <Flex
+        direction={isMobile ? "column" : "row"}
+        justify="space-between"
+        align={isMobile ? "flex-start" : "center"}
+        wrap="wrap"
+        gap={isMobile ? 4 : 8}
+        fontWeight="semibold"
+      >
+        <Box>
+          <Heading as="h3" fontSize="lg" color="whiteAlpha.800" mb={1}>
+            Total Income
+          </Heading>
+          <Text fontSize="3xl" color="green.200">
+            ${totalIncome}
+          </Text>
+        </Box>
 
-      <div className="flex justify-evenly items-center mt-3 flex-wrap">
-        <div>
-          <h2 className="font-bold text-gray-500">Income/Budget</h2>
-          <h3 className="text-6xl font-bold text-gray-800">
-            <span className="flex items-center gap-3">
-              <TbTriangleFilled className="text-green-500 text-2xl" />
-              $50000
-            </span>
-          </h3>
-        </div>
-        <div>
-          <h2 className="font-bold text-gray-500">Expenses</h2>
-          <h3 className="text-6xl font-bold text-gray-800">
-            <span className="flex items-center gap-3">
-              <TbTriangleInvertedFilled className="text-red-500 text-2xl" />
-              $50000
-            </span>
-          </h3>
-        </div>
-      </div>
-    </div>
+        <Box>
+          <Heading as="h3" fontSize="lg" color="whiteAlpha.800" mb={1}>
+            Total Expenses
+          </Heading>
+          <Text fontSize="3xl" color="red.200">
+            ${totalExpenses}
+          </Text>
+        </Box>
+
+        <Box>
+          <Heading as="h3" fontSize="lg" color="whiteAlpha.800" mb={1}>
+            Balance
+          </Heading>
+          <Text fontSize="3xl" color="blue.200">
+            ${balance}
+          </Text>
+        </Box>
+
+        <Box w="100%">
+          <Heading as="h3" fontSize="lg" color="whiteAlpha.800" mb={2}>
+            Expense Percentage
+          </Heading>
+          <Flex align="center">
+            <Progress
+              value={expensePercentage}
+              colorScheme="teal"
+              size="sm"
+              borderRadius="md"
+              flex="1"
+            />
+            <Text fontSize="lg" color="whiteAlpha.900" ml={2}>
+              {expensePercentage.toFixed(2)}%
+            </Text>
+          </Flex>
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 

@@ -5,15 +5,16 @@ import "./index.css";
 import AuthProvider from "./context/auth-context";
 import { BrowserRouter } from "react-router-dom";
 import { ExpenseProvider } from "./context/expense-context";
+import { ChakraProvider } from "@chakra-ui/react";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <ExpenseProvider>
-        <BrowserRouter>
+  <AuthProvider>
+    <ExpenseProvider>
+      <BrowserRouter>
+        <ChakraProvider>
           <App />
-        </BrowserRouter>
-      </ExpenseProvider>
-    </AuthProvider>
-  </React.StrictMode>
+        </ChakraProvider>
+      </BrowserRouter>
+    </ExpenseProvider>
+  </AuthProvider>
 );

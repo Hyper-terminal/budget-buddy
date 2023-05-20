@@ -8,16 +8,14 @@ const Expense = sequelize.define("expense", {
     allowNull: false,
     primaryKey: true,
   },
+  name: { type: DataTypes.STRING, allowNull: false },
 
   category: {
     type: DataTypes.STRING,
     allowNull: false,
-    validate: {
-      isIn: [["Food", "Travel", "Entertainment", "Bills", "Others"]],
-    },
   },
   amount: { type: DataTypes.INTEGER, allowNull: false },
-  description: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.STRING, allowNull: true },
 });
 
 module.exports = Expense;

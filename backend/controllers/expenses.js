@@ -21,7 +21,7 @@ exports.postExpenses = async (req, res) => {
       name,
       userId: req.user.id,
     });
-    
+
     res.json({ success: true, expense });
   } catch (error) {
     if (error.name === "SequelizeValidationError") {
@@ -46,5 +46,20 @@ exports.deleteExpenses = async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Failed to delete expense" });
+  }
+};
+
+exports.patchExpense = async (req, res) => {
+  const { name, id, description, amount, category } = req.body;
+  try {
+    await Expense.update(
+      { name, description, amount, category },
+      { where: { id: id, userId: req.user.id } }
+    );
+    res.json({ success: true, message: "Expense updated successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update expense" });
   }
 };

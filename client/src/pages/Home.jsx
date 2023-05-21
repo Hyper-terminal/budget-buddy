@@ -1,14 +1,19 @@
 import { Box, Flex } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Banner from "../components/Banner";
 import Categories from "../components/Categories";
 import Chart from "../components/Chart";
 import Expenses from "../components/Expenses";
-import ExpenseForm from "../components/ExpenseForm";
 
 const Home = () => {
+  const ref = useRef();
+
+  useEffect(() => {
+    ref.current.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
-    <>
+    <div ref={ref}>
       <Banner />
       <Chart expenses={[]} />
 
@@ -20,7 +25,7 @@ const Home = () => {
           <Categories />
         </Box>
       </Flex>
-    </>
+    </div>
   );
 };
 

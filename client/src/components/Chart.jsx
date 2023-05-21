@@ -1,80 +1,86 @@
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import { AiOutlineDollar } from "react-icons/ai";
+import { useExpense } from "../context/expense-context";
+import { useNavigate } from "react-router-dom";
 import {
-  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
   YAxis,
+  CartesianGrid,
   Tooltip,
+  ResponsiveContainer,
 } from "recharts";
-import { useExpense } from "../context/expense-context";
 
 const Chart = () => {
+  const navigate = useNavigate();
   const { expenses } = useExpense();
 
-  const chartTheme = {
-    axis: {
-      stroke: "#ffffff",
-      tick: {
-        fill: "#ffffff",
-      },
-    },
-    tooltip: {
-      backgroundColor: "#333333",
-      color: "#ffffff",
-    },
-  };
+  const data = expenses.map((expense) => ({
+    name: expense.name,
+    value: expense.amount,
+  }));
+
+  if (data.length === 0) {
+    return (
+      <Box
+        width={"100%"}
+        height={"100%"}
+        display="inline-block"
+        borderRadius="lg"
+        color="whiteAlpha.800"
+        boxShadow="md"
+        p={4}
+        bg="linear-gradient(45deg, #000022, #220044)"
+      >
+        <Flex justify="center" align="center" height="200px">
+          <Text fontSize="lg" fontWeight="semibold" color="white">
+            No expenses
+          </Text>
+        </Flex>
+      </Box>
+    );
+  }
 
   return (
     <Box
-      bg="linear-gradient(45deg, #000022, #220044)"
-      p={4}
-      boxShadow="lg"
+      display="inline-block"
+      width={"100%"}
+      height={"100%"}
       borderRadius="lg"
-      color="white"
+      color="whiteAlpha.800"
+      boxShadow="md"
+      p={4}
+      bg="linear-gradient(45deg, #000022, #220044)"
       mt={10}
-      position="relative"
-      overflow="hidden"
     >
-      {expenses?.length === 0 && (
-        <Box textAlign="center" fontSize="lg" fontWeight="semibold">
-          No expenses
-        </Box>
-      )}
-      {expenses?.length > 0 && (
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={expenses}
-            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-          >
-            <XAxis
-              dataKey="date"
-              stroke={chartTheme.axis.stroke}
-              tick={{ fill: chartTheme.axis.tick.fill }}
-            />
-            <YAxis
-              stroke={chartTheme.axis.stroke}
-              tick={{ fill: chartTheme.axis.tick.fill }}
-            />
+      <Box width="100%" height={300} mt={6}>
+        <ResponsiveContainer>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff" />
+            <XAxis dataKey="name" stroke="#ffffff" />
+            <YAxis stroke="#ffffff" />
             <Tooltip
               contentStyle={{
-                backgroundColor: chartTheme.tooltip.backgroundColor,
-                color: chartTheme.tooltip.color,
+                borderRadius: "md",
+                backgroundColor: "#220044",
+                boxShadow: "md",
+                color: "white",
+                fontSize: "sm",
+                padding: "0.5rem",
               }}
             />
             <Line
               type="monotone"
-              dataKey="amount"
-              stroke="#4deeea"
+              dataKey="value"
+              stroke="#8884d8"
               strokeWidth={2}
-              dot={{ stroke: "#4deeea", strokeWidth: 2, r: 4 }}
-              activeDot={{ stroke: "#4deeea", strokeWidth: 3, r: 6 }}
-              fill="rgba(77, 238, 234, 0.3)" // Area fill color
+              dot={{ fill: "#8884d8" }}
             />
           </LineChart>
         </ResponsiveContainer>
-      )}
+      </Box>
     </Box>
   );
 };

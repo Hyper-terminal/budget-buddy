@@ -66,7 +66,7 @@ const ExpenseForm = () => {
       .then((result) => {
         if (result.success) {
           setForm(formInitialState);
-          setExpenses([...expenses, expense]);
+          setExpenses([...expenses, result.expense]);
           toast({
             title: "Expense Added",
             description: "Your expense has been successfully added.",

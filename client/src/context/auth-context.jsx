@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext({
   currentUser: null,
@@ -7,7 +7,9 @@ export const AuthContext = createContext({
 });
 
 const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(localStorage.getItem("USER_DETAILS"))
+  );
 
   const signIn = (user) => {
     setCurrentUser(user.user);
@@ -20,11 +22,6 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("USER_DETAILS");
     localStorage.removeItem("JWT_TOKEN");
   };
-
-  useEffect(() => {
-    if (localStorage.getItem("USER_DETAILS"))
-      setCurrentUser(JSON.parse(localStorage.getItem("USER_DETAILS")));
-  }, []);
 
   return (
     <AuthContext.Provider value={{ currentUser, signIn, signOut }}>

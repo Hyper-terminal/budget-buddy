@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Heading,
   Input,
@@ -13,6 +12,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3000/users/signin";
 const INITIAL_FORM = { email: "", password: "" };
@@ -20,6 +20,7 @@ const INITIAL_FORM = { email: "", password: "" };
 const Signin = () => {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState("");
+  const navigate = useNavigate();
 
   const { signIn } = useContext(AuthContext);
 
@@ -43,6 +44,7 @@ const Signin = () => {
       else {
         setForm(INITIAL_FORM);
         signIn(data);
+        navigate("/", { replace: true });
       }
     } catch (error) {
       setErrors(error.message);

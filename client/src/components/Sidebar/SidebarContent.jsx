@@ -1,32 +1,19 @@
 import { Box, CloseButton, Flex, Text } from "@chakra-ui/react";
 import React, { useContext } from "react";
-import {
-  FiCompass,
-  FiHome,
-  FiLogOut,
-  FiSettings,
-  FiStar,
-  FiTrendingUp,
-  FiPlus,
-} from "react-icons/fi";
+import { FiHome, FiLogOut, FiPlus } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
-import NavItem from "./NavItem";
 import { useExpense } from "../../context/expense-context";
-
-const LinkItems = [
-  { name: "Home", icon: FiHome },
-  { name: "Trending", icon: FiTrendingUp },
-  { name: "Explore", icon: FiCompass },
-  { name: "Favourites", icon: FiStar },
-  { name: "Settings", icon: FiSettings },
-];
+import NavItem from "./NavItem";
 
 const SidebarContent = ({ onClose, ...rest }) => {
   const { signOut } = useContext(AuthContext);
   const { openExpenseModal } = useExpense();
+  const navigate = useNavigate();
 
   const handleSignout = () => {
     signOut();
+    navigate("/");
   };
 
   return (
@@ -61,7 +48,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
           fontWeight="bold"
           color="white"
         >
-          Logo
+          Budget Buddy
         </Text>
         <CloseButton
           color="whiteAlpha.800"
@@ -78,11 +65,10 @@ const SidebarContent = ({ onClose, ...rest }) => {
         Add Expense
       </NavItem>
 
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
-          {link.name}
-        </NavItem>
-      ))}
+      <NavItem icon={FiHome} onClick={() => navigate("/expenses")}>
+        Home
+      </NavItem>
+
       <NavItem icon={FiLogOut} onClick={handleSignout}>
         Sign Out
       </NavItem>

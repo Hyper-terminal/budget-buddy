@@ -1,10 +1,9 @@
+import { Flex, Icon, Text } from "@chakra-ui/react";
 import React from "react";
-import { Link } from "react-router-dom";
-import { Flex, Text, Icon } from "@chakra-ui/react";
 
 const NavItem = ({ icon, children, ...rest }) => {
   return (
-    <Link to="#" textDecoration="none" _focus={{ boxShadow: "none" }}>
+    <div to="#" textDecoration="none" _focus={{ boxShadow: "none" }}>
       <Flex
         align="center"
         p="4"
@@ -34,7 +33,7 @@ const NavItem = ({ icon, children, ...rest }) => {
           {children}
         </Text>
       </Flex>
-    </Link>
+    </div>
   );
 };
 

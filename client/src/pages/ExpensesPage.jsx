@@ -1,17 +1,16 @@
-import { Box, Flex, Heading, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import React from "react";
+import { Box, Flex, Heading, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { AiOutlineDollar } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
 import { useExpense } from "../context/expense-context";
+import { useNavigate } from "react-router-dom";
 
-const Expenses = () => {
+const ExpensesPage = () => {
   const navigate = useNavigate();
   const { expenses } = useExpense();
 
-  if (expenses?.length === 0) {
+  if (expenses.length === 0) {
     return (
       <Box
-        flexBasis={["100%", "70%"]}
         width={"100%"}
         height={"100%"}
         display="inline-block"
@@ -32,7 +31,6 @@ const Expenses = () => {
 
   return (
     <Box
-      flexBasis={["100%", "70%"]}
       display="inline-block"
       width={"100%"}
       height={"100%"}
@@ -46,20 +44,12 @@ const Expenses = () => {
         <Heading as="h3" fontWeight="bold" fontSize="2xl" color="white">
           My Expenses
         </Heading>
-        <Text
-          fontSize="sm"
-          fontWeight="semibold"
-          cursor="pointer"
-          color="blue.200"
-        >
-          See All
-        </Text>
       </Flex>
 
       <Box borderTopWidth="1px" borderColor="whiteAlpha.200" mb={4} />
 
       <Wrap spacing={2}>
-        {expenses?.slice(0, 5)?.map((expense) => (
+        {expenses.map((expense) => (
           <WrapItem
             onClick={() => navigate(`/expenses/${expense.id}`)}
             key={expense.id}
@@ -109,4 +99,4 @@ const Expenses = () => {
   );
 };
 
-export default Expenses;
+export default ExpensesPage;

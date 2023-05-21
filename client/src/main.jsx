@@ -1,20 +1,20 @@
+import { ChakraProvider } from "@chakra-ui/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import AuthProvider from "./context/auth-context";
 import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import AuthProvider from "./context/auth-context";
 import { ExpenseProvider } from "./context/expense-context";
-import { ChakraProvider } from "@chakra-ui/react";
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <AuthProvider>
     <ExpenseProvider>
-      <BrowserRouter>
-        <ChakraProvider>
+      <ChakraProvider>
+        <BrowserRouter>
           <App />
-        </ChakraProvider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </ChakraProvider>
     </ExpenseProvider>
   </AuthProvider>
 );

@@ -13,11 +13,12 @@ import { useExpense } from "../context/expense-context";
 const Banner = () => {
   const totalIncome = 345670;
   const { expenses } = useExpense();
-  const totalExpenses = expenses.reduce(
-    (acc, expense) => acc + expense.amount,
+  const totalExpenses = expenses?.reduce(
+    (acc, expense) => acc + Number(expense.amount),
     0
   );
   const balance = totalIncome - totalExpenses;
+  
   const expensePercentage = (totalExpenses / totalIncome) * 100;
 
   const isMobile = useBreakpointValue({ base: true, md: false });

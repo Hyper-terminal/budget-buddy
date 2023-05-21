@@ -10,7 +10,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/auth-context";
 
 const API_URL = "http://localhost:3000/users/signup";
@@ -19,6 +19,7 @@ const INITIAL_FORM = { username: "", email: "", password: "" };
 const Signup = () => {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState("");
+  const navigate = useNavigate();
 
   const { signIn } = useContext(AuthContext);
 
@@ -42,6 +43,7 @@ const Signup = () => {
       else {
         setForm(INITIAL_FORM);
         signIn(data);
+        navigate("/");
       }
     } catch (error) {
       setErrors(error.message);

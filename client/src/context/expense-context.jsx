@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
+import { createContext, useContext, useState } from "react";
 
 const ExpenseContext = createContext({
   expenses: [],
@@ -14,18 +14,8 @@ export const useExpense = () => useContext(ExpenseContext);
 
 export const ExpenseProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
-  const toast = useToast();
-
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
-
-  useEffect(() => {
-    fetch("http://localhost:3000/expenses", {
-      headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
-    })
-      .then((res) => res.json())
-      .then((result) => setExpenses(result.expenses))
-      .catch((err) => console.error(err));
-  }, []);
+  const toast = useToast();
 
   const openExpenseModal = () => {
     setIsExpenseModalOpen(true);

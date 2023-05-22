@@ -47,6 +47,7 @@ const Expenses = () => {
           My Expenses
         </Heading>
         <Text
+          onClick={() => navigate("/expenses/all")}
           fontSize="sm"
           fontWeight="semibold"
           cursor="pointer"

@@ -1,28 +1,25 @@
+import { Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
-import { Box, Flex, Heading, Text, Wrap, WrapItem } from "@chakra-ui/react";
-import { AiOutlineDollar } from "react-icons/ai";
-import { useExpense } from "../context/expense-context";
-import { useNavigate } from "react-router-dom";
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
+import { useExpense } from "../context/expense-context";
 
 const Chart = () => {
-  const navigate = useNavigate();
   const { expenses } = useExpense();
 
-  const data = expenses.map((expense) => ({
+  const data = expenses?.map((expense) => ({
     name: expense.name,
     value: expense.amount,
   }));
 
-  if (data.length === 0) {
+  if (data?.length === 0) {
     return (
       <Box
         width={"100%"}
@@ -32,6 +29,7 @@ const Chart = () => {
         color="whiteAlpha.800"
         boxShadow="md"
         p={4}
+        mt={10}
         bg="linear-gradient(45deg, #000022, #220044)"
       >
         <Flex justify="center" align="center" height="200px">

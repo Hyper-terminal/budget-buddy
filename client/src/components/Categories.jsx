@@ -1,22 +1,11 @@
 import React from "react";
-import {
-  Box,
-  Flex,
-  Heading,
-  Text,
-  Wrap,
-  WrapItem,
-  Icon,
-} from "@chakra-ui/react";
-import {
-  RiRestaurantLine,
-  RiBus2Line,
-  RiHome2Line,
-  RiMovieLine,
-  RiHospitalLine,
-} from "react-icons/ri";
+import { Box, Flex, Heading, Text, Wrap, WrapItem, Icon } from "@chakra-ui/react";
+import { RiRestaurantLine, RiBus2Line, RiHome2Line, RiMovieLine, RiHospitalLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 const Categories = () => {
+  const navigate = useNavigate();
+
   const categories = [
     { name: "Food", icon: RiRestaurantLine, color: "teal.500" },
     { name: "Transportation", icon: RiBus2Line, color: "cyan.500" },
@@ -24,6 +13,10 @@ const Categories = () => {
     { name: "Entertainment", icon: RiMovieLine, color: "pink.500" },
     { name: "Healthcare", icon: RiHospitalLine, color: "orange.500" },
   ];
+
+  const handleClickCategory = (category) => {
+    navigate(`/expenses/all?category=${category}`);
+  };
 
   return (
     <Box
@@ -57,11 +50,9 @@ const Categories = () => {
             <Box
               p="6"
               borderRadius="lg"
-              // bg="linear-gradient(45deg, #0a192f, #143d59)"
               color="whiteAlpha.800"
               _hover={{
                 bg: "linear-gradient(45deg, #28274d, #4b3f72)",
-
                 color: "whiteAlpha.900",
               }}
               cursor="pointer"
@@ -69,6 +60,7 @@ const Categories = () => {
               alignItems="center"
               height="100%"
               w="100%"
+              onClick={() => handleClickCategory(category.name)}
             >
               <Icon
                 as={category.icon}

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ExpenseModal from "./components/ExpenseModal";
 import SimpleSidebar from "./components/Sidebar/SimpleSidebar";
@@ -9,9 +9,20 @@ import ExpenseDetailsPage from "./pages/ExpenseDetailsPage";
 import ExpenseEditPage from "./pages/ExpenseEditPage";
 import ExpensesPage from "./pages/ExpensesPage";
 import Home from "./pages/Home";
+import { useExpense } from "./context/expense-context";
 
 function App() {
+  const { setExpenses } = useExpense();
   const { currentUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/expenses", {
+      headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
+    })
+      .then((res) => res.json())
+      .then((result) => setExpenses(result.expenses))
+      .catch((err) => console.error(err));
+  }, [currentUser]);
 
   return (
     <>

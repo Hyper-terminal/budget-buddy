@@ -9,17 +9,17 @@ exports.postSignupUser = async (req, res) => {
 
     // generate salt and hash
     const hash = await bcrypt.hash(password, saltRounds);
-    const user = await User.create({ username, email, password: hash });
+    const user = await User.create({ username, email, password: hash, isPremium: false });
     const jwtToken = jwt.sign({ userId: user.id }, "secretkey");
 
     res.json({
       success: true,
       message: "successfully created the user",
       user: { username, email },
+      isPremium: false,
       jwtToken,
     });
   } catch (error) {
-    console.log(error);
     if (error.name === "SequelizeUniqueConstraintError") {
       res.status(400).json({
         success: false,
@@ -53,6 +53,7 @@ exports.postSigninUser = async (req, res) => {
           success: true,
           message: "successfully logged in",
           user: { username: user.username, email: user.email },
+          isPremium: user.isPremium,
           jwtToken,
         });
       } else {

@@ -14,7 +14,7 @@ const orderModel = require("./models/orders");
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json({ extended: true }));
+app.use(bodyParser.json({extended: true}));
 
 app.use("/users", userRoutes);
 app.use("/expenses", expenseRoutes);
@@ -25,9 +25,8 @@ userModel.hasMany(orderModel);
 expenseModel.belongsTo(userModel);
 orderModel.belongsTo(userModel);
 
-sequelize
-  .sync()
-  .then(() => {
-    app.listen(3000);
-  })
-  .catch((err) => console.error(err));
+sequelize.sync()
+    .then(() => {
+        app.listen(3000);
+    })
+    .catch((err) => console.error(err));

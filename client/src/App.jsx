@@ -13,7 +13,7 @@ import { useExpense } from "./context/expense-context";
 
 function App() {
   const { setExpenses } = useExpense();
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, updateUserStatus } = useContext(AuthContext);
 
   useEffect(() => {
     fetch("http://localhost:3000/expenses", {
@@ -22,6 +22,7 @@ function App() {
       .then((res) => res.json())
       .then((result) => setExpenses(result.expenses))
       .catch((err) => console.error(err));
+
   }, [currentUser]);
 
   return (

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Box } from "@chakra-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import ExpenseForm from "./ExpenseForm";
+import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
 import { useExpense } from "../context/expense-context";
+import ExpenseForm from "./ExpenseForm";
 
 const ExpenseModal = () => {
   const { isExpenseModalOpen, closeExpenseModal } = useExpense();

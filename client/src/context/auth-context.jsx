@@ -1,45 +1,57 @@
-import {createContext, useState} from "react";
+import { createContext, useEffect, useState } from "react";
+import { jwtDecoder } from "../utils/utils";
 
 export const AuthContext = createContext({
-    currentUser: null,
-    signIn: () => {
-    },
-    signOut: () => {
-    },
-    updateUserStatus: () => {
-    }
+  currentUser: null,
+  isPremium: null,
+  signIn: () => {},
+  signOut: () => {},
+  updateUserStatus: () => {},
 });
 
-const AuthProvider = ({children}) => {
-    const [currentUser, setCurrentUser] = useState(
-        JSON.parse(localStorage.getItem("USER_DETAILS"))
-    );
+const AuthProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(localStorage.getItem("USER_DETAILS"))
+  );
 
-    const signIn = (user) => {
-        setCurrentUser(user.user);
-        localStorage.setItem("JWT_TOKEN", user.jwtToken);
-        localStorage.setItem("USER_DETAILS", JSON.stringify(user));
-    };
+  const [isPremium, setIsPremium] = useState(false);
 
-    const signOut = () => {
-        setCurrentUser(null);
-        localStorage.removeItem("USER_DETAILS");
-        localStorage.removeItem("JWT_TOKEN");
-    };
+  const signIn = (user) => {
+    localStorage.setItem("JWT_TOKEN", user.jwtToken);
+    const decodedToken = jwtDecoder(user.jwtToken);
+    setCurrentUser(user.user);
+    setIsPremium(decodedToken.isPremium);
+  };
 
-    const updateUserStatus = (isPremium) => {
-        setCurrentUser(prev => {
-            return {
-                ...prev, isPremium
-            }
-        })
+  const signOut = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("JWT_TOKEN");
+  };
+
+  const updateUserStatus = (res = false) => {
+    if (res) {
+      localStorage.setItem("JWT_TOKEN", res.jwtToken);
+      const decodedToken = jwtDecoder(res.jwtToken);
+      setIsPremium(decodedToken.isPremium);
     }
+  };
 
-    return (
-        <AuthContext.Provider value={{currentUser, signIn, signOut, updateUserStatus}}>
-            {children}
-        </AuthContext.Provider>
-    );
+  useEffect(() => {
+    if (localStorage.getItem("JWT_TOKEN")) {
+      debugger;
+      const token = localStorage.getItem("JWT_TOKEN");
+      const decodedToken = jwtDecoder(token);
+      setIsPremium(decodedToken.isPremium);
+    }
+  }, [currentUser]);
+
+  return (
+    <AuthContext.Provider
+      value={{ currentUser,isPremium, signIn, signOut, updateUserStatus }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const User = require("../models/user");
-const jwt = require("jsonwebtoken");
+const { generateToken } = require("../utils/utils");
 
 exports.postSignupUser = async (req, res) => {
   try {
@@ -9,14 +9,18 @@ exports.postSignupUser = async (req, res) => {
 
     // generate salt and hash
     const hash = await bcrypt.hash(password, saltRounds);
-    const user = await User.create({ username, email, password: hash, isPremium: false });
-    const jwtToken = jwt.sign({ userId: user.id }, "secretkey");
+    const user = await User.create({
+      username,
+      email,
+      password: hash,
+      isPremium: false,
+    });
+    const jwtToken = generateToken(user.id, user.isPremium);
 
     res.json({
       success: true,
       message: "successfully created the user",
       user: { username, email },
-      isPremium: false,
       jwtToken,
     });
   } catch (error) {
@@ -47,13 +51,15 @@ exports.postSigninUser = async (req, res) => {
       const result = await bcrypt.compare(password, user.password);
       if (result) {
         // generate a token for user and send it
-        const jwtToken = jwt.sign({ userId: user.id }, "secretkey");
+        const jwtToken = generateToken(user.id, user.isPremium);
 
         res.json({
           success: true,
           message: "successfully logged in",
-          user: { username: user.username, email: user.email },
-          isPremium: user.isPremium,
+          user: {
+            username: user.username,
+            email: user.email,
+          },
           jwtToken,
         });
       } else {

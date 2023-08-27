@@ -10,10 +10,11 @@ import ExpenseEditPage from "./pages/ExpenseEditPage";
 import ExpensesPage from "./pages/ExpensesPage";
 import Home from "./pages/Home";
 import { useExpense } from "./context/expense-context";
+import { NotFound } from "./pages/NotFound";
 
 function App() {
   const { setExpenses } = useExpense();
-  const { currentUser, updateUserStatus } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     fetch("http://localhost:3000/expenses", {
@@ -46,7 +47,7 @@ function App() {
           </Route>
         )}
 
-        <Route path="*" element={<h1>Page not found</h1>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

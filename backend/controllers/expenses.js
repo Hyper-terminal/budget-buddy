@@ -63,3 +63,7 @@ exports.patchExpense = async (req, res) => {
       .json({ success: false, message: "Failed to update expense" });
   }
 };
+
+exports.getLeaderboard = async (req, res) => {
+
+}

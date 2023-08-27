@@ -1,10 +1,11 @@
 import { Box, CloseButton, Flex, Text, useToast } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { FiHome, FiLogOut, FiPlus, FiStar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import { useExpense } from "../../context/expense-context";
 import NavItem from "./NavItem";
+import { MdOutlineLeaderboard } from "react-icons/md";
 
 const SidebarContent = ({ onClose, ...rest }) => {
   const authCtx = useContext(AuthContext);
@@ -12,6 +13,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
   const { openExpenseModal, setExpenses } = useExpense();
   const navigate = useNavigate();
   const toast = useToast();
+  const [leaderBoard, setLeaderBoard] = useState([]);
 
   const handleSignout = () => {
     signOut();
@@ -69,6 +71,14 @@ const SidebarContent = ({ onClose, ...rest }) => {
     }
   };
 
+  const handleLeaderBoard = async () => {
+    const res = await fetch("http://localhost:3000/premium", {
+      headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
+    });
+    const data = await res.json();
+    setLeaderBoard([...data.data]);
+  };
+
   return (
     <Box
       bg="linear-gradient(45deg, #000022, #220044)"
@@ -122,14 +132,41 @@ const SidebarContent = ({ onClose, ...rest }) => {
         Home
       </NavItem>
 
-      {!authCtx?.isPremium  && (
+      {!authCtx?.isPremium && (
         <NavItem icon={FiStar} onClick={handlePayment}>
           Add Premium Membership
         </NavItem>
       )}
+
+      {authCtx?.isPremium && (
+        <NavItem icon={MdOutlineLeaderboard} onClick={handleLeaderBoard}>
+          LeaderBoard
+        </NavItem>
+      )}
+
       <NavItem icon={FiLogOut} onClick={handleSignout}>
         Sign Out
       </NavItem>
+
+      <Flex>
+        <Text
+          fontSize="2xl"
+          fontFamily="monospace"
+          fontWeight="bold"
+          color="white"
+        >
+          {leaderBoard.length > 0 &&
+            leaderBoard.map((item) => {
+              return (
+                <Box key={item.id}>
+                  <Text>
+                    {item.username}: {item.total_amount}
+                  </Text>
+                </Box>
+              );
+            })}
+        </Text>
+      </Flex>
     </Box>
   );
 };

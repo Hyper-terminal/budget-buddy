@@ -17,6 +17,7 @@ const AuthProvider = ({ children }) => {
   const [isPremium, setIsPremium] = useState(false);
 
   const signIn = (user) => {
+    localStorage.setItem("USER_DETAILS", JSON.stringify(user.user));
     localStorage.setItem("JWT_TOKEN", user.jwtToken);
     const decodedToken = jwtDecoder(user.jwtToken);
     setCurrentUser(user.user);
@@ -25,6 +26,8 @@ const AuthProvider = ({ children }) => {
 
   const signOut = () => {
     setCurrentUser(null);
+    localStorage.removeItem("USER_DETAILS");
+
     localStorage.removeItem("JWT_TOKEN");
   };
 
@@ -38,7 +41,6 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (localStorage.getItem("JWT_TOKEN")) {
-      debugger;
       const token = localStorage.getItem("JWT_TOKEN");
       const decodedToken = jwtDecoder(token);
       setIsPremium(decodedToken.isPremium);

@@ -1,11 +1,25 @@
-import { Box, CloseButton, Flex, Text, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  CloseButton,
+  DarkMode,
+  Flex,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+  useToast
+} from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import { FiHome, FiLogOut, FiPlus, FiStar } from "react-icons/fi";
+import { MdOutlineLeaderboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import { useExpense } from "../../context/expense-context";
+import { Leaderboard } from "../Leaderboard";
 import NavItem from "./NavItem";
-import { MdOutlineLeaderboard } from "react-icons/md";
 
 const SidebarContent = ({ onClose, ...rest }) => {
   const authCtx = useContext(AuthContext);
@@ -14,6 +28,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
   const navigate = useNavigate();
   const toast = useToast();
   const [leaderBoard, setLeaderBoard] = useState([]);
+  const { isOpen, onOpen, onClose: closeModal } = useDisclosure();
 
   const handleSignout = () => {
     signOut();
@@ -77,6 +92,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
     });
     const data = await res.json();
     setLeaderBoard([...data.data]);
+    onOpen();
   };
 
   return (
@@ -148,25 +164,15 @@ const SidebarContent = ({ onClose, ...rest }) => {
         Sign Out
       </NavItem>
 
-      <Flex>
-        <Text
-          fontSize="2xl"
-          fontFamily="monospace"
-          fontWeight="bold"
-          color="white"
-        >
-          {leaderBoard.length > 0 &&
-            leaderBoard.map((item) => {
-              return (
-                <Box key={item.id}>
-                  <Text>
-                    {item.username}: {item.total_amount}
-                  </Text>
-                </Box>
-              );
-            })}
-        </Text>
-      </Flex>
+      <Modal size='2xl' isOpen={isOpen} onClose={closeModal} variant='dark'>
+        <ModalOverlay />
+        <ModalContent background='purple.900'>
+          <ModalCloseButton color='white'/>
+          <ModalBody >
+            <Leaderboard data={leaderBoard} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

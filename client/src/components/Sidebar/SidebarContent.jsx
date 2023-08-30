@@ -1,7 +1,6 @@
 import {
   Box,
   CloseButton,
-  DarkMode,
   Flex,
   Modal,
   ModalBody,

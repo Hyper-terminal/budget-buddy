@@ -1,4 +1,5 @@
 const Expense = require("../models/expense");
+const User = require("../models/user");
 
 exports.getExpenses = async (req, res) => {
   try {
@@ -14,13 +15,23 @@ exports.getExpenses = async (req, res) => {
 exports.postExpenses = async (req, res) => {
   try {
     const { category, amount, description, name } = req.body;
-    const expense = await Expense.create({
+    const expense = Expense.create({
       category,
       amount,
       description,
       name,
       userId: req.user.id,
     });
+
+    // need to update total amount in users table
+    const getUserDetails = await User.findOne({ where: { id: req.user.id } });
+
+    // updated total amount
+    const totalAmount = getUserDetails.total_amount + amount;
+    const updatedUser = await User.update(
+      { total_amount: totalAmount },
+      { where: { id: req.user.id } }
+    );
 
     res.json({ success: true, expense });
   } catch (error) {
@@ -63,7 +74,3 @@ exports.patchExpense = async (req, res) => {
       .json({ success: false, message: "Failed to update expense" });
   }
 };
-
-exports.getLeaderboard = async (req, res) => {
-
-}

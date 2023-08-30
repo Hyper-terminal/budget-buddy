@@ -4,7 +4,11 @@ const User = require("../models/user");
 exports.getExpenses = async (req, res) => {
   try {
     const expenses = await Expense.findAll({ where: { userId: req.user.id } });
-    res.json({ success: true, expenses });
+    res.json({
+      success: true,
+      expenses,
+      totalExpenses: req.user.total_expense,
+    });
   } catch (error) {
     res
       .status(500)
@@ -15,7 +19,7 @@ exports.getExpenses = async (req, res) => {
 exports.postExpenses = async (req, res) => {
   try {
     const { category, amount, description, name } = req.body;
-    const expense = Expense.create({
+    const expense = await Expense.create({
       category,
       amount,
       description,
@@ -23,17 +27,15 @@ exports.postExpenses = async (req, res) => {
       userId: req.user.id,
     });
 
-    // need to update total amount in users table
-    const getUserDetails = await User.findOne({ where: { id: req.user.id } });
-
     // updated total amount
-    const totalAmount = getUserDetails.total_amount + amount;
-    const updatedUser = await User.update(
-      { total_amount: totalAmount },
+    const totalAmount = Number(req.user.total_expense) + Number(amount);
+
+    await User.update(
+      { total_expense: totalAmount },
       { where: { id: req.user.id } }
     );
 
-    res.json({ success: true, expense });
+    res.json({ success: true, expense, totalExpenses: totalAmount });
   } catch (error) {
     if (error.name === "SequelizeValidationError") {
       res
@@ -49,10 +51,29 @@ exports.postExpenses = async (req, res) => {
 
 exports.deleteExpenses = async (req, res) => {
   try {
-    await Expense.destroy({
-      where: { id: req.params.expenseId, userId: req.user.id },
+    // need to find the amount of above expense first
+    const currentExpense = await Expense.findOne({
+      where: { id: req.params.expenseId },
     });
-    res.json({ success: true, message: "Expense deleted successfully" });
+    //
+    const totalExpenses =
+      Number(req.user.total_expense) - Number(currentExpense.amount);
+
+    Promise.all([
+      Expense.destroy({
+        where: { id: req.params.expenseId, userId: req.user.id },
+      }),
+      User.update(
+        { total_expense: totalExpenses },
+        { where: { id: req.user.id } }
+      ),
+    ]);
+
+    res.json({
+      success: true,
+      message: "Expense deleted successfully",
+      totalExpenses: totalExpenses || 0,
+    });
   } catch (error) {
     res
       .status(500)

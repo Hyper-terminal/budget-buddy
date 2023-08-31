@@ -59,7 +59,7 @@ exports.deleteExpenses = async (req, res) => {
     const totalExpenses =
       Number(req.user.total_expense) - Number(currentExpense.amount);
 
-    Promise.all([
+    await Promise.all([
       Expense.destroy({
         where: { id: req.params.expenseId, userId: req.user.id },
       }),
@@ -83,12 +83,26 @@ exports.deleteExpenses = async (req, res) => {
 
 exports.patchExpense = async (req, res) => {
   const { name, id, description, amount, category } = req.body;
+
   try {
     await Expense.update(
       { name, description, amount, category },
       { where: { id: id, userId: req.user.id } }
     );
-    res.json({ success: true, message: "Expense updated successfully" });
+
+    const totalExpense = await Expense.sum("amount", {
+      where: { userId: req.user.id },
+    });
+
+    await User.update(
+      { total_expense: totalExpense || 0 },
+      { where: { id: req.user.id } }
+    ),
+      res.json({
+        success: true,
+        message: "Expense updated successfully",
+        totalExpenses: totalExpense,
+      });
   } catch (error) {
     res
       .status(500)

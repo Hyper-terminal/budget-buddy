@@ -18,7 +18,7 @@ const MotionBox = motion(Box);
 const ExpenseEditPage = () => {
   const navigate = useNavigate();
   const { expenseId } = useParams();
-  const { expenses, setExpenses } = useExpense();
+  const { expenses, setExpenses, setTotalExpenses } = useExpense();
   const toast = useToast();
 
   const [name, setName] = useState("");
@@ -65,7 +65,8 @@ const ExpenseEditPage = () => {
             Number(expense.id) === Number(expenseId) ? updatedExpense : expense
           )
         );
-
+        const data = await response.json();
+        setTotalExpenses(data.totalExpenses);
         toast({
           title: "Expense updated",
           status: "success",

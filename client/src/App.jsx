@@ -13,7 +13,7 @@ import { useExpense } from "./context/expense-context";
 import { NotFound } from "./pages/NotFound";
 
 function App() {
-  const { setExpenses } = useExpense();
+  const { setExpenses, setTotalExpenses } = useExpense();
   const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
@@ -21,9 +21,12 @@ function App() {
       headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
     })
       .then((res) => res.json())
-      .then((result) => setExpenses(result.expenses))
+      .then((result) => {
+        debugger;
+        setTotalExpenses(Number(result.totalExpenses));
+        setExpenses(result.expenses);
+      })
       .catch((err) => console.error(err));
-
   }, [currentUser]);
 
   return (

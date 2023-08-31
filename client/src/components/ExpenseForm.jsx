@@ -23,7 +23,8 @@ const formInitialState = {
 const ExpenseForm = () => {
   const [form, setForm] = useState(formInitialState);
   const [error, setError] = useState("");
-  const { expenses, setExpenses, closeExpenseModal } = useExpense();
+  const { expenses, setExpenses, closeExpenseModal, setTotalExpenses } =
+    useExpense();
   const { description, amount, category, name } = form;
   const toast = useToast();
 
@@ -66,6 +67,7 @@ const ExpenseForm = () => {
       .then((result) => {
         if (result.success) {
           setForm(formInitialState);
+          setTotalExpenses(Number(result.totalExpenses));
           setExpenses([...expenses, result.expense]);
           toast({
             title: "Expense Added",

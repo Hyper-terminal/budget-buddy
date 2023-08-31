@@ -1,24 +1,20 @@
-import React from "react";
 import {
   Box,
   Flex,
-  Text,
-  Stack,
-  Progress,
-  useBreakpointValue,
   Heading,
+  Progress,
+  Text,
+  useBreakpointValue,
 } from "@chakra-ui/react";
+import React from "react";
 import { useExpense } from "../context/expense-context";
 
 const Banner = () => {
-  const totalIncome = 345670;
-  const { expenses } = useExpense();
-  const totalExpenses = expenses?.reduce(
-    (acc, expense) => acc + Number(expense.amount),
-    0
-  );
+  const totalIncome = 15000;
+  const { totalExpenses } = useExpense();
+
   const balance = totalIncome - totalExpenses;
-  
+
   const expensePercentage = (totalExpenses / totalIncome) * 100;
 
   const isMobile = useBreakpointValue({ base: true, md: false });

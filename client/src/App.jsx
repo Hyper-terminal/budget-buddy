@@ -22,7 +22,6 @@ function App() {
     })
       .then((res) => res.json())
       .then((result) => {
-        debugger;
         setTotalExpenses(Number(result.totalExpenses));
         setExpenses(result.expenses);
       })

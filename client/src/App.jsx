@@ -11,6 +11,7 @@ import ExpensesPage from "./pages/ExpensesPage";
 import Home from "./pages/Home";
 import { useExpense } from "./context/expense-context";
 import { NotFound } from "./pages/NotFound";
+import { ForgotPassword } from "./components/ForgotPassword";
 
 function App() {
   const { setExpenses, setTotalExpenses } = useExpense();
@@ -39,6 +40,9 @@ function App() {
 
         {!currentUser && <Route path="/signin" element={<Signin />} />}
         {!currentUser && <Route path="/signup" element={<Signup />} />}
+        {!currentUser && (
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+        )}
 
         {currentUser && (
           <Route path="/expenses/*" element={<SimpleSidebar />}>

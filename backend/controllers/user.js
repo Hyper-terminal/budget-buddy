@@ -85,3 +85,5 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to delete user" });
   }
 };
+
+exports.postForgotPassword = async (req, res) => {};

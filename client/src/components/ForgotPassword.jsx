@@ -29,7 +29,7 @@ export const ForgotPassword = () => {
 
       const data = await res.json();
 
-      if (!data.success) new Error();
+      if (!res.ok || !data.success) new Error();
 
       toast({
         title: "Mail sent",

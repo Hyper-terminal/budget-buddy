@@ -18,15 +18,17 @@ function App() {
   const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
-    fetch("http://localhost:3000/expenses", {
-      headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setTotalExpenses(Number(result.totalExpenses));
-        setExpenses(result.expenses);
+    if (currentUser) {
+      fetch("http://localhost:3000/expenses", {
+        headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
       })
-      .catch((err) => console.error(err));
+        .then((res) => res.json())
+        .then((result) => {
+          setTotalExpenses(Number(result.totalExpenses));
+          setExpenses(result.expenses);
+        })
+        .catch((err) => console.error(err));
+    }
   }, [currentUser]);
 
   return (

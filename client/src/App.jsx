@@ -1,17 +1,20 @@
-import React, { useContext, useEffect } from "react";
+import { Spinner } from "@chakra-ui/react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ExpenseModal from "./components/ExpenseModal";
+import { ForgotPassword } from "./components/ForgotPassword";
 import SimpleSidebar from "./components/Sidebar/SimpleSidebar";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import { AuthContext } from "./context/auth-context";
-import ExpenseDetailsPage from "./pages/ExpenseDetailsPage";
-import ExpenseEditPage from "./pages/ExpenseEditPage";
-import ExpensesPage from "./pages/ExpensesPage";
-import Home from "./pages/Home";
 import { useExpense } from "./context/expense-context";
-import { NotFound } from "./pages/NotFound";
-import { ForgotPassword } from "./components/ForgotPassword";
+
+const ExpenseDetailsPage = lazy(() => import("./pages/ExpenseDetailsPage"));
+const ExpenseEditPage = lazy(() => import("./pages/ExpenseEditPage"));
+const ExpensesPage = lazy(() => import("./pages/ExpensesPage"));
+const Home = lazy(() => import("./pages/Home"));
+const Report = lazy(() => import("./pages/Report"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 function App() {
   const { setExpenses, setTotalExpenses } = useExpense();
@@ -32,7 +35,7 @@ function App() {
   }, [currentUser]);
 
   return (
-    <>
+    <Suspense fallback={<Spinner />}>
       <ExpenseModal />
       <Routes>
         {currentUser && (
@@ -52,12 +55,13 @@ function App() {
             <Route path="all" element={<ExpensesPage />} />
             <Route path=":expenseId/edit" element={<ExpenseEditPage />} />
             <Route path=":expenseId" element={<ExpenseDetailsPage />} />
+            <Route path="report" element={<Report />} />
           </Route>
         )}
 
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
+    </Suspense>
   );
 }
 

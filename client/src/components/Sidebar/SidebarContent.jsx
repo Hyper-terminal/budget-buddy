@@ -9,10 +9,11 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import { FiHome, FiLogOut, FiPlus, FiStar } from "react-icons/fi";
+import { HiOutlineDocumentReport } from "react-icons/hi";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
@@ -159,15 +160,26 @@ const SidebarContent = ({ onClose, ...rest }) => {
         </NavItem>
       )}
 
+      {authCtx?.isPremium && (
+        <NavItem
+          icon={HiOutlineDocumentReport}
+          onClick={() => {
+            navigate("/expenses/report");
+          }}
+        >
+          Reports
+        </NavItem>
+      )}
+
       <NavItem icon={FiLogOut} onClick={handleSignout}>
         Sign Out
       </NavItem>
 
-      <Modal size='2xl' isOpen={isOpen} onClose={closeModal} variant='dark'>
+      <Modal size="2xl" isOpen={isOpen} onClose={closeModal} variant="dark">
         <ModalOverlay />
-        <ModalContent background='purple.900'>
-          <ModalCloseButton color='white'/>
-          <ModalBody >
+        <ModalContent background="purple.900">
+          <ModalCloseButton color="white" />
+          <ModalBody>
             <Leaderboard data={leaderBoard} />
           </ModalBody>
         </ModalContent>

@@ -117,7 +117,6 @@ exports.postForgotPasswordLink = async (req, res) => {
 
     if (!currentUser) new Error();
 
-    console.log(currentUser);
     await PasswordModel.create({
       isActive: true,
       id: uniqueId,
@@ -222,7 +221,6 @@ exports.postUpdatePassword = async (req, res) => {
         .json({ success: false, message: "Link not found" });
     }
 
-    console.log(pwdObj);
     await User.update(
       { password: hashedPassword },
       { where: { id: pwdObj.userId } }

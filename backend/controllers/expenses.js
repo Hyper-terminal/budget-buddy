@@ -5,14 +5,67 @@ const User = require("../models/user");
 const sequelize = require("../utils/database");
 
 exports.getExpenses = async (req, res) => {
+  let t; // Declare the transaction variable outside the try-catch block
+
   try {
-    const expenses = await Expense.findAll({ where: { userId: req.user.id } });
-    res.json({
-      success: true,
-      expenses,
-      totalExpenses: req.user.total_expense,
-    });
+    let expenses = [];
+    const isPagination = req.query.pageNumber;
+    console.log(isPagination);
+    console.log(req.query);
+    if (isPagination) {
+      t = await sequelize.transaction();
+
+      const itemLimit = 10;
+      const pageNumber = parseInt(req.query.pageNumber);
+      const offset = (pageNumber - 1) * itemLimit;
+
+      expenses = await Expense.findAll({
+        where: { userId: req.user.id },
+        offset,
+        limit: itemLimit,
+        transaction: t,
+      });
+
+      const totalExpenses = await Expense.count({
+        where: { userId: req.user.id },
+        transaction: t,
+      });
+
+      const totalPages = Math.ceil(totalExpenses / itemLimit);
+
+      await t.commit();
+
+      const hasNextPage = pageNumber < totalPages;
+      const hasPreviousPage = pageNumber > 1;
+      const previousPageNumber = hasPreviousPage ? pageNumber - 1 : null;
+      const lastPageNumber = totalPages;
+
+      res.json({
+        success: true,
+        expenses,
+        totalExpenses: req.user.total_expense,
+        currentPageNumber: pageNumber,
+        hasNextPage,
+        hasPreviousPage,
+        previousPageNumber,
+        lastPageNumber,
+      });
+    } else {
+      expenses = await Expense.findAll({
+        where: { userId: req.user.id },
+      });
+
+      res.json({
+        success: true,
+        expenses,
+        totalExpenses: req.user.total_expense,
+      });
+    }
   } catch (error) {
+    if (t) {
+      await t.rollback();
+    }
+    console.error(error); // Log the error for debugging purposes
     res
       .status(500)
       .json({ success: false, message: "Failed to retrieve expenses" });
@@ -32,14 +85,14 @@ exports.postExpenses = async (req, res) => {
         name,
         userId: req.user.id,
       },
-      { transaction: t }
+      { transaction: t },
     );
     // updated total amount
     const totalAmount = Number(req.user.total_expense) + Number(amount);
 
     await User.update(
       { total_expense: totalAmount },
-      { where: { id: req.user.id }, transaction: t }
+      { where: { id: req.user.id }, transaction: t },
     );
 
     await t.commit(); // if there are no issues than we can safely update the values in DB
@@ -72,7 +125,7 @@ exports.deleteExpenses = async (req, res) => {
       }),
       User.update(
         { total_expense: totalExpenses },
-        { where: { id: req.user.id }, transaction }
+        { where: { id: req.user.id }, transaction },
       ),
     ]);
     await transaction.commit();
@@ -97,7 +150,7 @@ exports.patchExpense = async (req, res) => {
   try {
     await Expense.update(
       { name, description, amount, category },
-      { where: { id: id, userId: req.user.id }, transaction }
+      { where: { id: id, userId: req.user.id }, transaction },
     );
 
     const totalExpense = await Expense.sum("amount", {
@@ -107,16 +160,16 @@ exports.patchExpense = async (req, res) => {
 
     await User.update(
       { total_expense: totalExpense || 0 },
-      { where: { id: req.user.id }, transaction }
-    )
+      { where: { id: req.user.id }, transaction },
+    );
 
     await transaction.commit();
 
-      res.json({
-        success: true,
-        message: "Expense updated successfully",
-        totalExpenses: totalExpense,
-      });
+    res.json({
+      success: true,
+      message: "Expense updated successfully",
+      totalExpenses: totalExpense,
+    });
   } catch (error) {
     await transaction.rollback();
     res

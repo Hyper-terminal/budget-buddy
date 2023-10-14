@@ -1,6 +1,12 @@
 import { Box, CloseButton, Flex, Text, useToast } from "@chakra-ui/react";
 import React, { useContext } from "react";
-import { FiHome, FiLogOut, FiPlus, FiStar } from "react-icons/fi";
+import {
+  FiHome,
+  FiLogOut,
+  FiPlus,
+  FiStar,
+  FiDownloadCloud,
+} from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import { useExpense } from "../../context/expense-context";
@@ -69,6 +75,38 @@ const SidebarContent = ({ onClose, ...rest }) => {
     }
   };
 
+  const downloadHandler = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/expenses/download", {
+        headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Request failed with status: ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // Check if the response contains a download location
+    debugger;
+      if (data.data.Location) {
+        // Create an invisible anchor element for the download
+        debugger
+        const downloadLink = document.createElement("a");
+        downloadLink.href = data.data.location;
+        downloadLink.download = "expenses.csv"; // Set the desired filename
+
+        // Trigger a click on the anchor to start the download
+
+        downloadLink.click();
+      } else {
+        console.error("Download location not found in the response");
+      }
+    } catch (error) {
+      console.error("Error handling download:", error);
+    }
+  };
+
   return (
     <Box
       bg="linear-gradient(45deg, #000022, #220044)"
@@ -122,7 +160,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
         Home
       </NavItem>
 
-      {!authCtx?.isPremium  && (
+      <NavItem icon={FiDownloadCloud} onClick={downloadHandler}>
+        Download
+      </NavItem>
+
+      {!authCtx?.isPremium && (
         <NavItem icon={FiStar} onClick={handlePayment}>
           Add Premium Membership
         </NavItem>

@@ -11,7 +11,7 @@ export const AuthContext = createContext({
 
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("USER_DETAILS"))
+    JSON.parse(localStorage.getItem("USER_DETAILS")),
   );
 
   const [isPremium, setIsPremium] = useState(false);
@@ -38,7 +38,6 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (localStorage.getItem("JWT_TOKEN")) {
-      debugger;
       const token = localStorage.getItem("JWT_TOKEN");
       const decodedToken = jwtDecoder(token);
       setIsPremium(decodedToken.isPremium);
@@ -47,7 +46,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ currentUser,isPremium, signIn, signOut, updateUserStatus }}
+      value={{ currentUser, isPremium, signIn, signOut, updateUserStatus }}
     >
       {children}
     </AuthContext.Provider>

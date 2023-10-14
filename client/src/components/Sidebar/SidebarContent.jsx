@@ -1,15 +1,24 @@
-import { Box, CloseButton, Flex, Text, useToast } from "@chakra-ui/react";
-import React, { useContext } from "react";
 import {
-  FiHome,
-  FiLogOut,
-  FiPlus,
-  FiStar,
-  FiDownloadCloud,
-} from "react-icons/fi";
+  Box,
+  CloseButton,
+  Flex,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
+import React, { useContext, useState } from "react";
+import { FiHome, FiLogOut, FiPlus, FiStar } from "react-icons/fi";
+import { HiOutlineDocumentReport } from "react-icons/hi";
+import { MdOutlineLeaderboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import { useExpense } from "../../context/expense-context";
+import { Leaderboard } from "../Leaderboard";
 import NavItem from "./NavItem";
 
 const SidebarContent = ({ onClose, ...rest }) => {
@@ -18,6 +27,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
   const { openExpenseModal, setExpenses } = useExpense();
   const navigate = useNavigate();
   const toast = useToast();
+  const [leaderBoard, setLeaderBoard] = useState([]);
+  const { isOpen, onOpen, onClose: closeModal } = useDisclosure();
 
   const handleSignout = () => {
     signOut();
@@ -88,10 +99,10 @@ const SidebarContent = ({ onClose, ...rest }) => {
       const data = await res.json();
 
       // Check if the response contains a download location
-    debugger;
+      debugger;
       if (data.data.Location) {
         // Create an invisible anchor element for the download
-        debugger
+        debugger;
         const downloadLink = document.createElement("a");
         downloadLink.href = data.data.location;
         downloadLink.download = "expenses.csv"; // Set the desired filename
@@ -105,6 +116,15 @@ const SidebarContent = ({ onClose, ...rest }) => {
     } catch (error) {
       console.error("Error handling download:", error);
     }
+  };
+
+  const handleLeaderBoard = async () => {
+    const res = await fetch("http://localhost:3000/premium", {
+      headers: { Authorization: localStorage.getItem("JWT_TOKEN") },
+    });
+    const data = await res.json();
+    setLeaderBoard([...data.data]);
+    onOpen();
   };
 
   return (
@@ -169,9 +189,37 @@ const SidebarContent = ({ onClose, ...rest }) => {
           Add Premium Membership
         </NavItem>
       )}
+
+      {authCtx?.isPremium && (
+        <NavItem icon={MdOutlineLeaderboard} onClick={handleLeaderBoard}>
+          LeaderBoard
+        </NavItem>
+      )}
+
+      {authCtx?.isPremium && (
+        <NavItem
+          icon={HiOutlineDocumentReport}
+          onClick={() => {
+            navigate("/expenses/report");
+          }}
+        >
+          Reports
+        </NavItem>
+      )}
+
       <NavItem icon={FiLogOut} onClick={handleSignout}>
         Sign Out
       </NavItem>
+
+      <Modal size="2xl" isOpen={isOpen} onClose={closeModal} variant="dark">
+        <ModalOverlay />
+        <ModalContent background="purple.900">
+          <ModalCloseButton color="white" />
+          <ModalBody>
+            <Leaderboard data={leaderBoard} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

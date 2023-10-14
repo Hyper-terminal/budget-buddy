@@ -128,6 +128,16 @@ const Signin = () => {
 
             <ChakraLink
               as={Link}
+              to="/forgot-password"
+              color="gray.300"
+              fontWeight="semibold"
+              _hover={{ color: "white" }}
+            >
+              Forgot Password?
+            </ChakraLink>
+
+            <ChakraLink
+              as={Link}
               to="/signup"
               color="gray.300"
               fontWeight="semibold"

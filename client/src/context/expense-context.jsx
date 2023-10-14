@@ -3,6 +3,8 @@ import { createContext, useContext, useState } from "react";
 
 const ExpenseContext = createContext({
   expenses: [],
+  totalExpenses: 0,
+  setTotalExpenses: () => {},
   setExpenses: () => {},
   deleteExpense: () => {},
   isExpenseModalOpen: false,
@@ -14,6 +16,7 @@ export const useExpense = () => useContext(ExpenseContext);
 
 export const ExpenseProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
+  const [totalExpenses, setTotalExpenses] = useState(0);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const toast = useToast();
 
@@ -37,6 +40,8 @@ export const ExpenseProvider = ({ children }) => {
         setExpenses((prev) =>
           prev.filter((exp) => Number(exp.id) !== Number(expenseId))
         );
+        const data = await res.json();
+        setTotalExpenses(data.totalExpenses);
         callback();
         toast({
           title: "Expense deleted",
@@ -68,11 +73,13 @@ export const ExpenseProvider = ({ children }) => {
 
   const value = {
     expenses,
+    totalExpenses,
     setExpenses,
     deleteExpense,
     isExpenseModalOpen,
     openExpenseModal,
     closeExpenseModal,
+    setTotalExpenses,
   };
 
   return (

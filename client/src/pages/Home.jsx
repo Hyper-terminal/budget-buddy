@@ -15,7 +15,7 @@ const Home = () => {
   return (
     <div ref={ref}>
       <Banner />
-      <Chart expenses={[]} />
+      <Chart />
 
       <Flex wrap="wrap" direction={["column", "row"]} mt={10} gap={4}>
         <Box flex={["100%", "70%"]} mb={[4, 0]}>

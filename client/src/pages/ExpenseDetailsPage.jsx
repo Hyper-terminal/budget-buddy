@@ -22,7 +22,7 @@ const ExpenseDetailsPage = () => {
   }, []);
 
   const expense = expenses.find(
-    (item) => Number(item.id) === Number(expenseId)
+    (item) => Number(item.id) === Number(expenseId),
   );
 
   const handleDelete = () => {
@@ -30,7 +30,7 @@ const ExpenseDetailsPage = () => {
   };
 
   const handleEdit = () => {
-    navigate('/expenses/' + expenseId + '/edit');
+    navigate("/expenses/" + expenseId + "/edit");
   };
 
   if (!expense) {

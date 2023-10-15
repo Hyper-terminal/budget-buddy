@@ -12,7 +12,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
-import { FiHome, FiLogOut, FiPlus, FiStar } from "react-icons/fi";
+import { FiHome, FiLogOut, FiPlus, FiStar, FiDownloadCloud } from "react-icons/fi";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { MdOutlineLeaderboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";

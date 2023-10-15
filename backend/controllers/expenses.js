@@ -10,12 +10,11 @@ exports.getExpenses = async (req, res) => {
   try {
     let expenses = [];
     const isPagination = req.query.pageNumber;
-    console.log(isPagination);
-    console.log(req.query);
+
     if (isPagination) {
       t = await sequelize.transaction();
 
-      const itemLimit = 10;
+      const itemLimit = req.query.limit ? parseInt(req.query.limit) : 10;
       const pageNumber = parseInt(req.query.pageNumber);
       const offset = (pageNumber - 1) * itemLimit;
 

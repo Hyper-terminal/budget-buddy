@@ -1,37 +1,83 @@
-import React, { useState } from "react";
 import {
   Box,
+  Button,
   Flex,
   Heading,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Text,
   Wrap,
   WrapItem,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Button,
 } from "@chakra-ui/react";
-import { AiOutlineDollar } from "react-icons/ai";
-import { useExpense } from "../context/expense-context";
-import { useLocation, useNavigate } from "react-router-dom";
 import { LayoutGroup, motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { AiOutlineDollar } from "react-icons/ai";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import Pagination from "../components/Pagination";
+import { useExpense } from "../context/expense-context";
 
 const ExpensesPage = () => {
   const navigate = useNavigate();
   const { expenses } = useExpense();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const category = queryParams.get("category");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page");
+  const limit = searchParams.get("limit");
+  const category = searchParams.get("category");
+  const { setExpenses, setTotalExpenses } = useExpense();
 
   const [sortOption, setSortOption] = useState("");
+  const [pagination, setPagination] = useState({
+    currentPageNumber: 1,
+    hasNextPage: false,
+    hasPreviousPage: false,
+    previousPageNumber: null,
+    lastPageNumber: 1,
+  });
+
+  // Function to fetch expenses based on current page
+  const fetchExpenses = (pageNumber, limitItems) => {
+    if (!pageNumber) pageNumber = page || 1;
+    if (!limitItems) limitItems = limit || 2;
+    fetch(
+      `http://localhost:3000/expenses?pageNumber=${pageNumber}&limit=${limitItems}`,
+      {
+        headers: {
+          Authorization: localStorage.getItem("JWT_TOKEN"),
+        },
+      },
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const newParams = {
+          pageNumber,
+          limitItems,
+        };
+        setSearchParams(newParams);
+        setExpenses(data.expenses);
+        setTotalExpenses(parseInt(data.totalExpenses));
+        setPagination({
+          currentPageNumber: parseInt(data.currentPageNumber),
+          hasNextPage: data.hasNextPage,
+          hasPreviousPage: data.hasPreviousPage,
+          lastPageNumber: data.lastPageNumber,
+          previousPageNumber: data.previousPageNumber,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchExpenses(); // Fetch expenses based on the current page and limit
+  }, []); // Update when page number or limit changes
 
   // Filter expenses based on the category
   const filteredExpenses = category
     ? expenses.filter(
         (expense) =>
           expense.category.toLowerCase().trim() ===
-          category.trim().toLowerCase()
+          category.trim().toLowerCase(),
       )
     : expenses;
 
@@ -52,7 +98,7 @@ const ExpensesPage = () => {
     setSortOption(option);
   };
 
-  if (sortedExpenses.length === 0) {
+  if (sortedExpenses?.length === 0) {
     return (
       <Box
         width={"100%"}
@@ -122,7 +168,7 @@ const ExpensesPage = () => {
 
       <LayoutGroup>
         <Wrap spacing={2}>
-          {sortedExpenses.map((expense) => (
+          {sortedExpenses?.map((expense) => (
             <WrapItem
               onClick={() => navigate(`/expenses/${expense.id}`)}
               key={expense.id}
@@ -176,6 +222,15 @@ const ExpensesPage = () => {
           ))}
         </Wrap>
       </LayoutGroup>
+
+      <Pagination
+        totalPageCount={pagination.lastPageNumber || 1}
+        currentPageProp={pagination.currentPageNumber || 1}
+        onPageSelect={fetchExpenses}
+        limit={2}
+        hasNextPage={pagination.hasNextPage}
+        hasPrevPage={pagination.hasPreviousPage}
+      />
     </Box>
   );
 };

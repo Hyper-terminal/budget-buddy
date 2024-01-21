@@ -92,6 +92,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+
 exports.postForgotPasswordLink = async (req, res) => {
   try {
     const defaultClient = SibApiV3Sdk.ApiClient.instance;
@@ -104,7 +105,7 @@ exports.postForgotPasswordLink = async (req, res) => {
     const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
     const sender = {
-      email: "abhisharma001001001@gmail.com",
+      email: process.env.EMAIL_SENDER,
     };
 
     const receivers = [{ email: req.body.email }];
